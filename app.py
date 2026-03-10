@@ -2,32 +2,15 @@ import streamlit as st
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 
-df = pd.read_csv("loan_scoring.csv")
-
-features = [
-    "age",
-    "monthly_income",
-    "loan_amount",
-    "credit_score",
-    "employment_years",
-    "credit_history_years"
-]
-
-X = df[features]
-y = df["loan_status"]
-
-model = RandomForestClassifier()
-model.fit(X, y)
-
 st.set_page_config(page_title="AI Loan Risk System", layout="wide")
 
 st.title("🏦 AI Loan Risk Scoring Dashboard")
 st.write("Hybrid AI + Rule Engine Loan Risk Evaluation")
 
-# ================= LOAD DATA ================= #
+# ---------------- LOAD DATA ---------------- #
 
 @st.cache_resource
-def load_model():
+def train_model():
 
     df = pd.read_csv("loan_scoring.csv")
 
@@ -48,9 +31,9 @@ def load_model():
 
     return model
 
-model = load_model()
+model = train_model()
 
-# ================= SIDEBAR ================= #
+# ---------------- SIDEBAR ---------------- #
 
 st.sidebar.header("Customer Information")
 
@@ -91,9 +74,9 @@ credit_history_years = st.sidebar.slider(
     5
 )
 
-# ================= RULE ENGINE ================= #
+# ---------------- RULE ENGINE ---------------- #
 
-def rule_engine(age,income,loan_amount,credit_score):
+def rule_engine(credit_score, income, loan_amount):
 
     if credit_score < 450:
         return "Reject"
@@ -103,7 +86,7 @@ def rule_engine(age,income,loan_amount,credit_score):
 
     return "Pass"
 
-# ================= PREDICTION ================= #
+# ---------------- PREDICTION ---------------- #
 
 if st.sidebar.button("Evaluate Application"):
 
@@ -120,9 +103,9 @@ if st.sidebar.button("Evaluate Application"):
 
     risk = model.predict_proba(data)[0][1]
 
-    rule_result = rule_engine(age,income,loan_amount,credit_score)
+    rule_result = rule_engine(credit_score,income,loan_amount)
 
-# ================= OUTPUT ================= #
+# ---------------- OUTPUT ---------------- #
 
     st.subheader("Risk Assessment")
 
@@ -134,31 +117,25 @@ if st.sidebar.button("Evaluate Application"):
     with col2:
 
         if risk < 0.3:
-            level = "Low Risk"
-            color = "🟢"
+            level="Low Risk"
+            color="🟢"
         elif risk < 0.6:
-            level = "Medium Risk"
-            color = "🟡"
+            level="Medium Risk"
+            color="🟡"
         else:
-            level = "High Risk"
-            color = "🔴"
+            level="High Risk"
+            color="🔴"
 
         st.metric("Risk Level",f"{color} {level}")
 
     with col3:
         st.metric("Rule Engine",rule_result)
 
-    st.divider()
+    if rule_result=="Reject":
+        st.error("Application Rejected")
 
-    if rule_result == "Reject":
-        st.error("Application Rejected by Rule Engine")
-
-    elif risk > 0.65:
-        st.warning("High risk detected. Manual review recommended.")
+    elif risk>0.65:
+        st.warning("Manual review recommended")
 
     else:
-        st.success("Loan Application Approved")
-
-    st.subheader("Customer Data")
-
-    st.dataframe(data)
+        st.success("Loan Approved")
