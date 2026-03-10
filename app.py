@@ -18,15 +18,19 @@ def load_model():
 
     df = pd.read_csv("loan_scoring.csv")
 
-    # remove comma in numbers
-    for col in df.columns:
-        df[col] = df[col].replace(",", "", regex=True)
+    # fix numeric columns only
+    numeric_cols = [
+        "monthly_income",
+        "loan_amount",
+        "monthly_expenses",
+        "credit_score",
+        "age",
+        "employment_years",
+        "credit_history_years"
+    ]
 
-    # convert numeric columns
-    df["monthly_income"] = df["monthly_income"].astype(float)
-    df["loan_amount"] = df["loan_amount"].astype(float)
-    df["credit_score"] = df["credit_score"].astype(float)
-    df["age"] = df["age"].astype(float)
+    for col in numeric_cols:
+        df[col] = df[col].replace(",", "", regex=True).astype(float)
 
     features = [
         "age",
@@ -40,7 +44,10 @@ def load_model():
     X = df[features]
     y = df["loan_status"]
 
-    model = RandomForestClassifier()
+    model = RandomForestClassifier(
+        n_estimators=100,
+        random_state=42
+    )
 
     model.fit(X, y)
 
