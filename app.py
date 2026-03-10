@@ -3,7 +3,16 @@ import joblib
 import pandas as pd
 
 # Load model
-model = joblib.load("risk_model.pkl")
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+
+df = pd.read_csv("loan_scoring.csv")
+
+X = df.drop("Risk", axis=1)
+y = df["Risk"]
+
+model = RandomForestClassifier()
+model.fit(X, y)
 
 st.set_page_config(
     page_title="AI Loan Risk System",
