@@ -2,6 +2,23 @@ import streamlit as st
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 
+df = pd.read_csv("loan_scoring.csv")
+
+features = [
+    "age",
+    "monthly_income",
+    "loan_amount",
+    "credit_score",
+    "employment_years",
+    "credit_history_years"
+]
+
+X = df[features]
+y = df["loan_status"]
+
+model = RandomForestClassifier()
+model.fit(X, y)
+
 st.set_page_config(page_title="AI Loan Risk System", layout="wide")
 
 st.title("🏦 AI Loan Risk Scoring Dashboard")
