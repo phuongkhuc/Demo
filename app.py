@@ -17,8 +17,8 @@ def load_model():
 
     df = pd.read_csv("loan_scoring.csv")
 
-    X = df.drop("Risk", axis=1)
-    y = df["Risk"]
+    X = df.drop("loan_status", axis=1)
+    y = df["loan_status"]
 
     model = RandomForestClassifier()
     model.fit(X, y)
