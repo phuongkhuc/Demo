@@ -4,6 +4,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 
+from sklearn.ensemble import RandomForestClassifier
+
 st.set_page_config(page_title="AI Loan Risk System", layout="wide")
 
 st.title("🏦 AI Loan Risk Scoring Dashboard")
