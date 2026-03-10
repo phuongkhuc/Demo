@@ -18,10 +18,15 @@ def load_model():
 
     df = pd.read_csv("loan_scoring.csv")
 
-    # FIX NUMBER FORMAT
-    df["monthly_income"] = df["monthly_income"].replace(",", "", regex=True).astype(float)
-    df["loan_amount"] = df["loan_amount"].replace(",", "", regex=True).astype(float)
-    df["monthly_expenses"] = df["monthly_expenses"].replace(",", "", regex=True).astype(float)
+    # remove comma in numbers
+    for col in df.columns:
+        df[col] = df[col].replace(",", "", regex=True)
+
+    # convert numeric columns
+    df["monthly_income"] = df["monthly_income"].astype(float)
+    df["loan_amount"] = df["loan_amount"].astype(float)
+    df["credit_score"] = df["credit_score"].astype(float)
+    df["age"] = df["age"].astype(float)
 
     features = [
         "age",
