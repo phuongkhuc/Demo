@@ -1,18 +1,6 @@
 import streamlit as st
-import joblib
-import pandas as pd
-
-# Load model
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-
-df = pd.read_csv("loan_scoring.csv")
-
-X = df.drop("Risk", axis=1)
-y = df["Risk"]
-
-model = RandomForestClassifier()
-model.fit(X, y)
 
 st.set_page_config(
     page_title="AI Loan Risk System",
@@ -21,6 +9,23 @@ st.set_page_config(
 
 st.title("🏦 AI Loan Risk Scoring Dashboard")
 st.write("Hybrid AI + Rule Engine Loan Risk Evaluation")
+
+# ---------- LOAD & TRAIN MODEL ---------- #
+
+@st.cache_resource
+def load_model():
+
+    df = pd.read_csv("loan_scoring.csv")
+
+    X = df.drop("Risk", axis=1)
+    y = df["Risk"]
+
+    model = RandomForestClassifier()
+    model.fit(X, y)
+
+    return model
+
+model = load_model()
 
 # ---------------- SIDEBAR ---------------- #
 
@@ -62,6 +67,7 @@ credit_history_years = st.sidebar.slider(
     30,
     5
 )
+
 existing_debt = st.sidebar.number_input(
     "Existing Debt ($)",
     min_value=0,
@@ -80,6 +86,7 @@ loan_term = st.sidebar.selectbox(
     "Loan Term (months)",
     [12,24,36,48,60]
 )
+
 education = st.sidebar.selectbox(
     "Education",
     ["High School","Bachelor","Master","PhD"]
@@ -108,66 +115,64 @@ if st.sidebar.button("Evaluate Application"):
 
     monthly_income = income / 12
     monthly_expenses = monthly_income * 0.3
-    
+
     data = pd.DataFrame({
-    "age":[age],
-    "gender":["male"],
-    "employment_years":[employment_years],
-    "employment_status":[employment_status],
-    "monthly_income":[monthly_income],
-    "monthly_expenses":[monthly_expenses],
-    "credit_history_years":[credit_history_years],
-    "past_default":[0],
-    "residence_type":["rent"],
-    "loan_amount":[loan_amount],
-    "education":[education],
-    "loan_intent":["personal"],
-    "interest_rate":[12],
-    "loan_percent_income":[loan_amount/monthly_income],
-    "credit_score":[credit_score],
-    "existing_debt":[existing_debt],
-    "late_payments":[late_payments],
-    "loan_term":[loan_term]
-})
+        "age":[age],
+        "gender":["male"],
+        "employment_years":[employment_years],
+        "employment_status":[employment_status],
+        "monthly_income":[monthly_income],
+        "monthly_expenses":[monthly_expenses],
+        "credit_history_years":[credit_history_years],
+        "past_default":[0],
+        "residence_type":["rent"],
+        "loan_amount":[loan_amount],
+        "education":[education],
+        "loan_intent":["personal"],
+        "interest_rate":[12],
+        "loan_percent_income":[loan_amount/monthly_income],
+        "credit_score":[credit_score],
+        "existing_debt":[existing_debt],
+        "late_payments":[late_payments],
+        "loan_term":[loan_term]
+    })
+
     rule_result = rule_engine(age,income,loan_amount,credit_score)
 
-    data["gender"] = data["gender"].map({
-    "male":1,
-    "female":0
-})
+    data["gender"] = data["gender"].map({"male":1,"female":0})
 
     data["employment_status"] = data["employment_status"].map({
-    "employed":2,
-    "self-employed":1,
-    "unemployed":0
-})
+        "employed":2,
+        "self-employed":1,
+        "unemployed":0
+    })
 
     data["education"] = data["education"].map({
-    "High School":0,
-    "Bachelor":1,
-    "Master":2,
-    "PhD":3
-})
+        "High School":0,
+        "Bachelor":1,
+        "Master":2,
+        "PhD":3
+    })
 
     data["residence_type"] = data["residence_type"].map({
-    "rent":0,
-    "own":1,
-    "mortgage":2
-})
+        "rent":0,
+        "own":1,
+        "mortgage":2
+    })
 
     data["loan_intent"] = data["loan_intent"].map({
-    "personal":0,
-    "education":1,
-    "medical":2,
-    "venture":3,
-    "home_improvement":4
-})
+        "personal":0,
+        "education":1,
+        "medical":2,
+        "venture":3,
+        "home_improvement":4
+    })
 
     data = data[model.feature_names_in_]
 
     risk = model.predict_proba(data)[0][1]
 
-    # ---------------- OUTPUT ---------------- #
+# ---------------- OUTPUT ---------------- #
 
     st.subheader("Risk Assessment")
 
