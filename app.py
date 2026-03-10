@@ -2,10 +2,7 @@ import streamlit as st
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 
-st.set_page_config(
-    page_title="AI Loan Risk System",
-    layout="wide"
-)
+st.set_page_config(page_title="AI Loan Risk System", layout="wide")
 
 st.title("🏦 AI Loan Risk Scoring Dashboard")
 st.write("Hybrid AI + Rule Engine Loan Risk Evaluation")
@@ -17,17 +14,15 @@ def load_model():
 
     df = pd.read_csv("loan_scoring.csv")
 
-    # remove commas from numeric values
-    df["monthly_income"] = df["monthly_income"].replace(",", "", regex=True)
-    df["loan_amount"] = df["loan_amount"].replace(",", "", regex=True)
+    # remove commas
+    df = df.replace(",", "", regex=True)
 
-    # convert to numeric
-    df["monthly_income"] = pd.to_numeric(df["monthly_income"], errors="coerce")
-    df["loan_amount"] = pd.to_numeric(df["loan_amount"], errors="coerce")
-    df["credit_score"] = pd.to_numeric(df["credit_score"], errors="coerce")
-    df["age"] = pd.to_numeric(df["age"], errors="coerce")
-    df["employment_years"] = pd.to_numeric(df["employment_years"], errors="coerce")
-    df["credit_history_years"] = pd.to_numeric(df["credit_history_years"], errors="coerce")
+    # convert everything numeric when possible
+    for col in df.columns:
+        df[col] = pd.to_numeric(df[col], errors="ignore")
+
+    # keep only numeric columns
+    df = df.select_dtypes(include=["int64", "float64"])
 
     df = df.dropna()
 
@@ -75,26 +70,11 @@ loan_amount = st.sidebar.number_input(
     value=20000
 )
 
-credit_score = st.sidebar.slider(
-    "Credit Score",
-    300,
-    850,
-    650
-)
+credit_score = st.sidebar.slider("Credit Score", 300, 850, 650)
 
-employment_years = st.sidebar.slider(
-    "Employment Years",
-    0,
-    40,
-    5
-)
+employment_years = st.sidebar.slider("Employment Years", 0, 40, 5)
 
-credit_history_years = st.sidebar.slider(
-    "Credit History (Years)",
-    0,
-    30,
-    5
-)
+credit_history_years = st.sidebar.slider("Credit History Years", 0, 30, 5)
 
 # ---------------- RULE ENGINE ---------------- #
 
@@ -108,6 +88,7 @@ def rule_engine(age, income, loan_amount, credit_score):
 
     return "Pass"
 
+
 # ---------------- PREDICTION ---------------- #
 
 if st.sidebar.button("Evaluate Application"):
@@ -115,19 +96,17 @@ if st.sidebar.button("Evaluate Application"):
     monthly_income = income / 12
 
     data = pd.DataFrame({
-        "age": [age],
-        "monthly_income": [monthly_income],
-        "loan_amount": [loan_amount],
-        "credit_score": [credit_score],
-        "employment_years": [employment_years],
-        "credit_history_years": [credit_history_years]
+        "age":[age],
+        "monthly_income":[monthly_income],
+        "loan_amount":[loan_amount],
+        "credit_score":[credit_score],
+        "employment_years":[employment_years],
+        "credit_history_years":[credit_history_years]
     })
 
     risk = model.predict_proba(data)[0][1]
 
     rule_result = rule_engine(age, income, loan_amount, credit_score)
-
-    # ---------------- OUTPUT ---------------- #
 
     st.subheader("Risk Assessment")
 
