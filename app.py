@@ -1,9 +1,6 @@
 import streamlit as st
-import joblib
 import pandas as pd
-
-# Load model
-model = joblib.load("risk_model.pkl")
+from sklearn.ensemble import RandomForestClassifier
 
 st.set_page_config(
     page_title="AI Loan Risk System",
@@ -12,6 +9,44 @@ st.set_page_config(
 
 st.title("🏦 AI Loan Risk Scoring Dashboard")
 st.write("Hybrid AI + Rule Engine Loan Risk Evaluation")
+
+
+# ---------------- LOAD MODEL ---------------- #
+
+@st.cache_resource
+def load_model():
+
+    df = pd.read_csv("loan_scoring.csv")
+
+    # FIX NUMBER FORMAT
+    df["monthly_income"] = df["monthly_income"].replace(",", "", regex=True).astype(float)
+    df["loan_amount"] = df["loan_amount"].replace(",", "", regex=True).astype(float)
+    df["monthly_expenses"] = df["monthly_expenses"].replace(",", "", regex=True).astype(float)
+
+    features = [
+        "age",
+        "monthly_income",
+        "loan_amount",
+        "credit_score",
+        "employment_years",
+        "credit_history_years"
+    ]
+
+    X = df[features]
+    y = df["loan_status"]
+
+    model = RandomForestClassifier(
+        n_estimators=100,
+        random_state=42
+    )
+
+    model.fit(X,y)
+
+    return model
+
+
+model = load_model()
+
 
 # ---------------- SIDEBAR ---------------- #
 
@@ -53,6 +88,7 @@ credit_history_years = st.sidebar.slider(
     30,
     5
 )
+
 existing_debt = st.sidebar.number_input(
     "Existing Debt ($)",
     min_value=0,
@@ -71,6 +107,7 @@ loan_term = st.sidebar.selectbox(
     "Loan Term (months)",
     [12,24,36,48,60]
 )
+
 education = st.sidebar.selectbox(
     "Education",
     ["High School","Bachelor","Master","PhD"]
@@ -80,6 +117,7 @@ employment_status = st.sidebar.selectbox(
     "Employment Status",
     ["employed","self-employed","unemployed"]
 )
+
 
 # ---------------- RULE ENGINE ---------------- #
 
@@ -93,72 +131,28 @@ def rule_engine(age,income,loan_amount,credit_score):
 
     return "Pass"
 
+
 # ---------------- PREDICTION ---------------- #
 
 if st.sidebar.button("Evaluate Application"):
 
     monthly_income = income / 12
-    monthly_expenses = monthly_income * 0.3
-    
+
     data = pd.DataFrame({
-    "age":[age],
-    "gender":["male"],
-    "employment_years":[employment_years],
-    "employment_status":[employment_status],
-    "monthly_income":[monthly_income],
-    "monthly_expenses":[monthly_expenses],
-    "credit_history_years":[credit_history_years],
-    "past_default":[0],
-    "residence_type":["rent"],
-    "loan_amount":[loan_amount],
-    "education":[education],
-    "loan_intent":["personal"],
-    "interest_rate":[12],
-    "loan_percent_income":[loan_amount/monthly_income],
-    "credit_score":[credit_score],
-    "existing_debt":[existing_debt],
-    "late_payments":[late_payments],
-    "loan_term":[loan_term]
-})
+        "age":[age],
+        "monthly_income":[monthly_income],
+        "loan_amount":[loan_amount],
+        "credit_score":[credit_score],
+        "employment_years":[employment_years],
+        "credit_history_years":[credit_history_years]
+    })
+
     rule_result = rule_engine(age,income,loan_amount,credit_score)
-
-    data["gender"] = data["gender"].map({
-    "male":1,
-    "female":0
-})
-
-    data["employment_status"] = data["employment_status"].map({
-    "employed":2,
-    "self-employed":1,
-    "unemployed":0
-})
-
-    data["education"] = data["education"].map({
-    "High School":0,
-    "Bachelor":1,
-    "Master":2,
-    "PhD":3
-})
-
-    data["residence_type"] = data["residence_type"].map({
-    "rent":0,
-    "own":1,
-    "mortgage":2
-})
-
-    data["loan_intent"] = data["loan_intent"].map({
-    "personal":0,
-    "education":1,
-    "medical":2,
-    "venture":3,
-    "home_improvement":4
-})
-
-    data = data[model.feature_names_in_]
 
     risk = model.predict_proba(data)[0][1]
 
-    # ---------------- OUTPUT ---------------- #
+
+# ---------------- OUTPUT ---------------- #
 
     st.subheader("Risk Assessment")
 
@@ -196,5 +190,4 @@ if st.sidebar.button("Evaluate Application"):
         st.success("Loan Application Approved")
 
     st.subheader("Customer Data")
-
     st.dataframe(data)
