@@ -10,7 +10,6 @@ st.set_page_config(
 st.title("🏦 AI Loan Risk Scoring Dashboard")
 st.write("Hybrid AI + Rule Engine Loan Risk Evaluation")
 
-
 # ---------------- LOAD MODEL ---------------- #
 
 @st.cache_resource
@@ -18,19 +17,19 @@ def load_model():
 
     df = pd.read_csv("loan_scoring.csv")
 
-    # fix numeric columns only
-    numeric_cols = [
-        "monthly_income",
-        "loan_amount",
-        "monthly_expenses",
-        "credit_score",
-        "age",
-        "employment_years",
-        "credit_history_years"
-    ]
+    # remove commas from numeric values
+    df["monthly_income"] = df["monthly_income"].replace(",", "", regex=True)
+    df["loan_amount"] = df["loan_amount"].replace(",", "", regex=True)
 
-    for col in numeric_cols:
-        df[col] = df[col].replace(",", "", regex=True).astype(float)
+    # convert to numeric
+    df["monthly_income"] = pd.to_numeric(df["monthly_income"], errors="coerce")
+    df["loan_amount"] = pd.to_numeric(df["loan_amount"], errors="coerce")
+    df["credit_score"] = pd.to_numeric(df["credit_score"], errors="coerce")
+    df["age"] = pd.to_numeric(df["age"], errors="coerce")
+    df["employment_years"] = pd.to_numeric(df["employment_years"], errors="coerce")
+    df["credit_history_years"] = pd.to_numeric(df["credit_history_years"], errors="coerce")
+
+    df = df.dropna()
 
     features = [
         "age",
@@ -56,12 +55,11 @@ def load_model():
 
 model = load_model()
 
-
 # ---------------- SIDEBAR ---------------- #
 
 st.sidebar.header("Customer Information")
 
-age = st.sidebar.slider("Age",18,70,30)
+age = st.sidebar.slider("Age", 18, 70, 30)
 
 income = st.sidebar.number_input(
     "Annual Income ($)",
@@ -98,10 +96,9 @@ credit_history_years = st.sidebar.slider(
     5
 )
 
-
 # ---------------- RULE ENGINE ---------------- #
 
-def rule_engine(age,income,loan_amount,credit_score):
+def rule_engine(age, income, loan_amount, credit_score):
 
     if credit_score < 450:
         return "Reject"
@@ -111,7 +108,6 @@ def rule_engine(age,income,loan_amount,credit_score):
 
     return "Pass"
 
-
 # ---------------- PREDICTION ---------------- #
 
 if st.sidebar.button("Evaluate Application"):
@@ -119,27 +115,26 @@ if st.sidebar.button("Evaluate Application"):
     monthly_income = income / 12
 
     data = pd.DataFrame({
-        "age":[age],
-        "monthly_income":[monthly_income],
-        "loan_amount":[loan_amount],
-        "credit_score":[credit_score],
-        "employment_years":[employment_years],
-        "credit_history_years":[credit_history_years]
+        "age": [age],
+        "monthly_income": [monthly_income],
+        "loan_amount": [loan_amount],
+        "credit_score": [credit_score],
+        "employment_years": [employment_years],
+        "credit_history_years": [credit_history_years]
     })
 
     risk = model.predict_proba(data)[0][1]
 
-    rule_result = rule_engine(age,income,loan_amount,credit_score)
+    rule_result = rule_engine(age, income, loan_amount, credit_score)
 
-
-# ---------------- OUTPUT ---------------- #
+    # ---------------- OUTPUT ---------------- #
 
     st.subheader("Risk Assessment")
 
-    col1,col2,col3 = st.columns(3)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.metric("Default Probability",f"{risk*100:.2f}%")
+        st.metric("Default Probability", f"{risk*100:.2f}%")
 
     with col2:
 
@@ -153,11 +148,10 @@ if st.sidebar.button("Evaluate Application"):
             level = "High Risk"
             color = "🔴"
 
-        st.metric("Risk Level",f"{color} {level}")
+        st.metric("Risk Level", f"{color} {level}")
 
     with col3:
-        st.metric("Rule Engine",rule_result)
-
+        st.metric("Rule Engine", rule_result)
 
     st.divider()
 
@@ -169,7 +163,6 @@ if st.sidebar.button("Evaluate Application"):
 
     else:
         st.success("Loan Application Approved")
-
 
     st.subheader("Customer Data")
     st.dataframe(data)
