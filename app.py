@@ -35,12 +35,9 @@ def load_model():
     X = df[features]
     y = df["loan_status"]
 
-    model = RandomForestClassifier(
-        n_estimators=100,
-        random_state=42
-    )
+    model = RandomForestClassifier()
 
-    model.fit(X,y)
+    model.fit(X, y)
 
     return model
 
@@ -89,35 +86,6 @@ credit_history_years = st.sidebar.slider(
     5
 )
 
-existing_debt = st.sidebar.number_input(
-    "Existing Debt ($)",
-    min_value=0,
-    max_value=100000,
-    value=5000
-)
-
-late_payments = st.sidebar.slider(
-    "Late Payments",
-    0,
-    20,
-    0
-)
-
-loan_term = st.sidebar.selectbox(
-    "Loan Term (months)",
-    [12,24,36,48,60]
-)
-
-education = st.sidebar.selectbox(
-    "Education",
-    ["High School","Bachelor","Master","PhD"]
-)
-
-employment_status = st.sidebar.selectbox(
-    "Employment Status",
-    ["employed","self-employed","unemployed"]
-)
-
 
 # ---------------- RULE ENGINE ---------------- #
 
@@ -147,9 +115,9 @@ if st.sidebar.button("Evaluate Application"):
         "credit_history_years":[credit_history_years]
     })
 
-    rule_result = rule_engine(age,income,loan_amount,credit_score)
-
     risk = model.predict_proba(data)[0][1]
+
+    rule_result = rule_engine(age,income,loan_amount,credit_score)
 
 
 # ---------------- OUTPUT ---------------- #
@@ -178,6 +146,7 @@ if st.sidebar.button("Evaluate Application"):
     with col3:
         st.metric("Rule Engine",rule_result)
 
+
     st.divider()
 
     if rule_result == "Reject":
@@ -188,6 +157,7 @@ if st.sidebar.button("Evaluate Application"):
 
     else:
         st.success("Loan Application Approved")
+
 
     st.subheader("Customer Data")
     st.dataframe(data)
