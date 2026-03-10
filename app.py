@@ -273,7 +273,7 @@ if st.sidebar.button("Evaluate Application"):
 
 
     # prediction
-
+    data = data[model.feature_names_in_]
     risk = model.predict_proba(data)[0][1]
 
     st.write("Risk probability:", risk)
