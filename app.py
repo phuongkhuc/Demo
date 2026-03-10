@@ -15,31 +15,31 @@ st.write("Hybrid AI + Rule Engine Loan Risk Evaluation")
 @st.cache_resource
 def load_model():
 
-df = pd.read_csv("loan_scoring.csv")
+    df = pd.read_csv("loan_scoring.csv")
 
 # encode categorical variables
-df["gender"] = df["gender"].map({"male":1,"female":0})
+    df["gender"] = df["gender"].map({"male":1,"female":0})
 
-df["employment_status"] = df["employment_status"].map({
+    df["employment_status"] = df["employment_status"].map({
     "employed":2,
     "self-employed":1,
     "unemployed":0
 })
 
-df["residence_type"] = df["residence_type"].map({
+    df["residence_type"] = df["residence_type"].map({
     "rent":0,
     "own":1,
     "mortgage":2
 })
 
-df["education"] = df["education"].map({
+    df["education"] = df["education"].map({
     "High School":0,
     "Bachelor":1,
     "Master":2,
     "PhD":3
 })
 
-df["loan_intent"] = df["loan_intent"].map({
+    df["loan_intent"] = df["loan_intent"].map({
     "personal":0,
     "education":1,
     "medical":2,
@@ -47,11 +47,11 @@ df["loan_intent"] = df["loan_intent"].map({
     "home_improvement":4
 })
 
-X = df.drop("loan_status", axis=1)
-y = df["loan_status"]
+    X = df.drop("loan_status", axis=1)
+    y = df["loan_status"]
 
-model = RandomForestClassifier()
-model.fit(X, y)
+    model = RandomForestClassifier()
+    model.fit(X, y)
 
     return model
 
