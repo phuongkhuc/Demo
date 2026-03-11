@@ -203,28 +203,59 @@ def decision_matrix(customer_type,risk,credit_score,dti,
 
     if customer_type == "NTB":
 
-        if risk >= 0.7 and credit_score >= 570 and dti <= 0.36:
-            return "Approve", expected_credit_limit
+        # ----- HIGH RISK SCORE (>=0.7) -----
 
-        if risk >= 0.7 and 431 <= credit_score < 570 and dti <= 0.36:
-            return "Approve", expected_credit_limit
+        if risk >= 0.7:
 
-        if risk >= 0.7 and 431 <= credit_score < 570 and 0.36 < dti <= 0.5:
+            if credit_score >= 570 and dti <= 0.5:
+                return "Approve", expected_credit_limit
 
-            limit = (0.36*monthly_income-existing_debt)/0.05
-            return "Partial Approve", int(limit)
+            if 431 <= credit_score < 570 and dti <= 0.36:
+                return "Approve", expected_credit_limit
+
+            if 431 <= credit_score < 570 and 0.36 < dti <= 0.5:
+
+                limit = (0.36*monthly_income-existing_debt)/0.05
+                return "Partial Approve", int(limit)
+
+            if pd.isna(credit_score) and dti <= 0.36:
+                return "Approve", expected_credit_limit
+
+            if pd.isna(credit_score) and 0.36 < dti <= 0.5:
+
+                limit = (0.36*monthly_income-existing_debt)/0.05
+                return "Partial Approve", int(limit)
+
+
+        # ----- MEDIUM RISK (False positive zone) -----
 
         if 0.5 <= risk < 0.7:
-            return "Manual Review",0
+
+            if credit_score >= 570 and dti <= 0.36:
+                return "Approve", expected_credit_limit
+
+            if credit_score >= 570 and 0.36 < dti <= 0.5:
+
+                limit = (0.36*monthly_income-existing_debt)/0.05
+                return "Partial Approve", int(limit)
+
+            if 431 <= credit_score < 570 and dti <= 0.36:
+                return "Manual Review",0
+
+            if 431 <= credit_score < 570 and 0.36 < dti <= 0.5:
+                return "Reject",0
 
         return "Reject",0
+
+
+    # ---------- ETB ----------
 
     if customer_type == "ETB":
 
         if risk >= 0.7 and credit_score >= 431 and dti <= 0.5:
             return "Approve", expected_credit_limit
 
-        if 0.5 <= risk < 0.7:
+        if 0.5 <= risk < 0.7 and credit_score >= 431 and dti <= 0.5:
             return "Manual Review",0
 
         return "Reject",0
@@ -272,7 +303,8 @@ if st.sidebar.button("Evaluate Application"):
 
 
 
-    # prediction
+    # Knock-out rules, Decision matrix #
+    
     data = data[model.feature_names_in_]
     risk = model.predict_proba(data)[0][1]
 
@@ -324,16 +356,24 @@ if st.sidebar.button("Evaluate Application"):
     else:
        st.error("Application Rejected")
 
+# False Positive Tuning Zone
 
-# ---
-    if rule_result == "Reject":
-        st.error("Application Rejected by Rule Engine")
+    if 0.5 <= risk < 0.7:
+        st.info("⚠ Medium Risk Zone → Sent to Manual Review to reduce False Positives")
+    
+    col4 = st.metric("AI Confidence Zone",
+                 "Manual Review" if 0.5<=risk<0.7 else "Auto Decision")
 
-    elif risk > 0.65:
-        st.warning("High risk detected. Manual review recommended.")
+# ---Alert-- #
+    
+   if rule_result == "Reject":
+       st.error("Application rejected by rule engine")
 
-    else:
-        st.success("Loan Application Approved")
+   elif 0.5 <= risk < 0.7:
+       st.warning("Medium risk detected → Manual review required")
+
+   elif risk >= 0.7:
+       st.success("Low default risk → Auto approval possible")
  
 
 # ---------------- OUTPUT ---------------- #
