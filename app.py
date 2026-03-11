@@ -16,7 +16,7 @@ st.write("Hybrid AI + Rule Engine Loan Risk Evaluation")
 @st.cache_resource
 def load_model():
 
-    df = pd.read_csv("loan_scoring.csv")
+    df = pd.read_csv("credit_data_processed.csv")
 
     # remove commas
     df = df.replace(",", "", regex=True)
@@ -72,7 +72,7 @@ employment_years = st.sidebar.slider(
 
 employment_status = st.sidebar.selectbox(
     "Employment Status",
-    ["employed","self-employed","unemployed"]
+    ["full_time","part_time","self_employed","unemployed"]
 )
 
 monthly_income = st.sidebar.number_input(
@@ -101,7 +101,7 @@ past_default = st.sidebar.selectbox(
 
 residence_type = st.sidebar.selectbox(
     "Residence Type",
-    ["rent","own","mortgage"]
+    ["mortgage","other","own","rent"]
 )
 
 loan_amount = st.sidebar.number_input(
@@ -113,12 +113,12 @@ loan_amount = st.sidebar.number_input(
 
 education = st.sidebar.selectbox(
     "Education",
-    ["High School","Bachelor","Master","PhD"]
+    ["associate","bachelor","doctorate","high school","master"]
 )
 
 loan_intent = st.sidebar.selectbox(
     "Loan Purpose",
-    ["personal","education","medical","venture","home_improvement"]
+    ["debt consolidation","education","home improvement","medical","personal","venture"]
 )
 
 interest_rate = st.sidebar.slider(
@@ -247,21 +247,21 @@ if st.sidebar.button("Evaluate Application"):
         "gender":[1 if gender=="Male" else 0],
         "employment_years":[employment_years],
         "employment_status":[
-            {"unemployed":0,"self-employed":1,"employed":2}[employment_status]
+            {"full_time":0,"part_time":1,"self_employed":2,"unemployed":3}[employment_status]
         ],
         "monthly_income":[monthly_income],
         "monthly_expenses":[monthly_expenses],
         "credit_history_years":[credit_history_years],
         "past_default":[1 if past_default=="Yes" else 0],
         "residence_type":[
-            {"rent":0,"own":1,"mortgage":2}[residence_type]
+            {"mortgage":0,"other":1,"own":2,"rent":3}[residence_type]
         ],
         "loan_amount":[loan_amount],
         "education":[
-            {"High School":0,"Bachelor":1,"Master":2,"PhD":3}[education]
+            {"associate":0,"bachelor":1,"doctorate":2,"high school":3,"master":4}[education]
         ],
         "loan_intent":[
-            {"personal":0,"education":1,"medical":2,"venture":3,"home_improvement":4}[loan_intent]
+            {"debt consolidation":0,"education":1,"home improvement":2,"medical":3,"personal":4,"venture":5}[loan_intent]
         ],
         "interest_rate":[interest_rate],
         "loan_percent_income":[loan_percent_income],
@@ -325,49 +325,23 @@ if st.sidebar.button("Evaluate Application"):
        st.error("Application Rejected")
 
 
-    # ----- Gauge ----- #
+# ---
+    if rule_result == "Reject":
+        st.error("Application Rejected by Rule Engine")
 
-    fig = go.Figure(go.Indicator(
-        mode="gauge+number",
-        value=risk * 100,
-        title={'text': "Default Risk (%)"},
-        gauge={
-            'axis': {'range':[0,100]},
-            'steps':[
-                {'range':[0,30],'color':"lightgreen"},
-                {'range':[30,60],'color':"yellow"},
-                {'range':[60,100],'color':"salmon"}
-            ]
-        }
-    ))
+    elif risk > 0.65:
+        st.warning("High risk detected. Manual review recommended.")
 
-    st.plotly_chart(fig, use_container_width=True, key="risk_gauge")
+    else:
+        st.success("Loan Application Approved")
+ 
 
-   # ---------------- Risk Distribution Chart ---------------- #
+# ---------------- OUTPUT ---------------- #
 
-    risk_chart = pd.DataFrame({
-       "Type":["Low Risk","Medium Risk","High Risk"],
-       "Probability":[
-             max(0,1-risk-0.3),
-             min(risk,0.6),
-             risk
-    ]
-})
 
-    fig3 = px.pie(
-        risk_chart,
-        names="Type",
-        values="Probability",
-        title="Risk Distribution"
-)
+    st.subheader("📊 AI Risk Assessment Dashboard")
 
-    st.plotly_chart(fig3, use_container_width=True, key="risk_distribution")
-
-    # ---------------- OUTPUT ---------------- #
-
-    risk = model.predict_proba(data)[0][1]
-
-    st.subheader("Risk Assessment")
+     # ---------------- ROW 1: METRICS ---------------- #
 
     col1,col2,col3 = st.columns(3)
 
@@ -392,51 +366,69 @@ if st.sidebar.button("Evaluate Application"):
         st.metric("Rule Engine",rule_result)
 
     st.divider()
-
-    if rule_result == "Reject":
-        st.error("Application Rejected by Rule Engine")
-
-    elif risk > 0.65:
-        st.warning("High risk detected. Manual review recommended.")
-
-    else:
-        st.success("Loan Application Approved")
-
-    st.subheader("Customer Data")
-
-    st.dataframe(data)
-
-
-
-    # ---------------- financial chart ---------------- #
-
-    finance_data = pd.DataFrame({
-        "Category":["Income","Expenses","Loan"],
-        "Amount":[monthly_income, monthly_expenses, loan_amount]
-})
-
-    fig2 = px.bar(
-       finance_data,
-       x="Category",
-       y="Amount",
-       color="Category",
-       title="Customer Financial Overview"
-)
-
-    st.plotly_chart(fig2, use_container_width=True, key="finance_chart")
-
- 
-
-    # ---------------- Layout fintech dashboard ---------------- #
-
-    st.subheader("Risk Assessment Dashboard")
-
+    
+   # ---------- ROW 2 : MAIN CHARTS ---------- #
+    
     col1, col2 = st.columns(2)
 
     with col1:
-        st.plotly_chart(fig, use_container_width=True)
 
-    with col2:
-        st.plotly_chart(fig2, use_container_width=True)
+        fig = go.Figure(go.Indicator(
+           mode="gauge+number",
+           value=risk * 100,
+           title={'text': "Default Risk (%)"},
+           gauge={
+               'axis': {'range':[0,100]},
+               'steps':[
+                   {'range':[0,30],'color':"lightgreen"},
+                   {'range':[30,60],'color':"yellow"},
+                   {'range':[60,100],'color':"salmon"}
+            ]
+        }
+    ))
 
-    st.plotly_chart(fig3, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True, key="risk_gauge")
+
+        # ---------------- financial chart ---------------- #
+
+   with col2:
+       
+       finance_data = pd.DataFrame({
+           "Category":["Income","Expenses","Loan"],
+           "Amount":[monthly_income, monthly_expenses, loan_amount]
+})
+
+       fig2 = px.bar(
+           finance_data,
+           x="Category",
+           y="Amount",
+           color="Category",
+           title="Customer Financial Overview"
+)
+
+       st.plotly_chart(fig2, use_container_width=True, key="finance_chart")
+
+
+# ---------------- ROW 3 : RISK DISTRIBUTION ---------------- #
+
+    st.subheader("Risk Distribution")
+    risk_chart = pd.DataFrame({
+       "Type":["Low Risk","High Risk"],
+       "Probability":[1-risk,risk]
+})
+
+    fig3 = px.pie(
+        risk_chart,
+        names="Type",
+        values="Probability",
+        title="Risk Probability Distribution"
+)
+
+    st.plotly_chart(fig3, use_container_width=True, key="risk_distribution")
+
+# ---------- ROW 4 : CUSTOMER DATA ---------- #
+
+    st.subheader("Customer Data")
+
+    st.dataframe(data)   
+
