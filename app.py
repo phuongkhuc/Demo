@@ -11,27 +11,33 @@ st.set_page_config(page_title="AI Loan Risk System", layout="wide")
 st.markdown("""
 <style>
 
-html, body, [class*="css"]  {
-    font-family: 'Inter', 'Segoe UI', sans-serif;
+/* page padding */
+.block-container{
+    padding-top:2rem;
+    padding-bottom:2rem;
+    padding-left:3rem;
+    padding-right:3rem;
 }
 
-h1 {
-    font-weight: 700;
-    letter-spacing: -0.5px;
+/* card style */
+.card{
+    background-color:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom:25px;
 }
 
-h2, h3 {
-    font-weight: 600;
+/* section title */
+.section-title{
+    font-size:20px;
+    font-weight:600;
+    margin-bottom:10px;
 }
 
-[data-testid="stMetricValue"]{
-    font-size:28px;
-    font-weight:700;
-}
-
-[data-testid="stMetricLabel"]{
-    font-size:14px;
-    color:#6b7280;
+/* spacing */
+.section-space{
+    margin-top:40px;
 }
 
 </style>
