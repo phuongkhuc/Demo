@@ -366,14 +366,14 @@ if st.sidebar.button("Evaluate Application"):
 
 # ---Alert-- #
     
-   if rule_result == "Reject":
-       st.error("Application rejected by rule engine")
+    if rule_result == "Reject":
+        st.error("Application rejected by rule engine")
 
-   elif 0.5 <= risk < 0.7:
-       st.warning("Medium risk detected → Manual review required")
+    elif 0.5 <= risk < 0.7:
+        st.warning("Medium risk detected → Manual review required")
 
-   elif risk >= 0.7:
-       st.success("Low default risk → Auto approval possible")
+    elif risk >= 0.7:
+        st.success("Low default risk → Auto approval possible")
  
 
 # ---------------- OUTPUT ---------------- #
