@@ -231,27 +231,6 @@ def knockout_rules(age,nationality,is_blacklisted,is_fraud,max_dpd,
 
     return "Pass"
 
-# Tách decision section
-st.markdown('<div class="card">', unsafe_allow_html=True)
-
-st.markdown('<div class="section-title">Final Decision</div>', unsafe_allow_html=True)
-
-st.metric("Decision", decision)
-
-if decision == "Approve":
-    st.success(f"Approved Limit: ${limit}")
-
-elif decision == "Partial Approve":
-    st.warning(f"Adjusted Limit: ${limit}")
-
-elif decision == "Manual Review":
-    st.info("Application requires manual review")
-
-else:
-    st.error("Application Rejected")
-
-st.markdown('</div>', unsafe_allow_html=True)
-
 
 # ---------------- Decision Matrix (Approve / Partial / Manual) ---------------- #
 
@@ -396,7 +375,9 @@ if st.sidebar.button("Evaluate Application"):
          monthly_income,
          existing_debt
     )
+    st.markdown('<div class="card">', unsafe_allow_html=True)
 
+    st.markdown('<div class="section-title">Final Decision</div>', unsafe_allow_html=True)
     st.subheader("Final Decision")
 
     st.metric("Decision",decision)
