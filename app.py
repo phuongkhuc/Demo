@@ -391,7 +391,7 @@ if st.sidebar.button("Evaluate Application"):
 
         # ---------------- financial chart ---------------- #
 
-   with col2:
+    with col2:
        
        finance_data = pd.DataFrame({
            "Category":["Income","Expenses","Loan"],
