@@ -231,6 +231,28 @@ def knockout_rules(age,nationality,is_blacklisted,is_fraud,max_dpd,
 
     return "Pass"
 
+# Tách decision section
+st.markdown('<div class="card">', unsafe_allow_html=True)
+
+st.markdown('<div class="section-title">Final Decision</div>', unsafe_allow_html=True)
+
+st.metric("Decision", decision)
+
+if decision == "Approve":
+    st.success(f"Approved Limit: ${limit}")
+
+elif decision == "Partial Approve":
+    st.warning(f"Adjusted Limit: ${limit}")
+
+elif decision == "Manual Review":
+    st.info("Application requires manual review")
+
+else:
+    st.error("Application Rejected")
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+
 # ---------------- Decision Matrix (Approve / Partial / Manual) ---------------- #
 
 def decision_matrix(customer_type,risk,credit_score,dti,
@@ -413,6 +435,24 @@ if st.sidebar.button("Evaluate Application"):
 
 # ---------------- OUTPUT ---------------- #
 
+    # Tách KPI dashboard section
+
+    st.markdown('<div class="card section-space">', unsafe_allow_html=True)
+
+    st.markdown('<div class="section-title">AI Risk Assessment Dashboard</div>', unsafe_allow_html=True)
+
+    col1,col2,col3 = st.columns(3)
+
+    with col1:
+        st.metric("Default Probability", f"{risk*100:.2f}%")
+
+    with col2:
+        st.metric("Risk Level", f"{color} {level}")
+
+    with col3:
+        st.metric("Rule Engine", rule_result)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
     st.subheader("📊 AI Risk Assessment Dashboard")
 
@@ -445,6 +485,22 @@ if st.sidebar.button("Evaluate Application"):
     st.divider()
     
    # ---------- ROW 2 : MAIN CHARTS ---------- #
+    #Tách Chart section
+
+    st.markdown('<div class="card section-space">', unsafe_allow_html=True)
+
+    col1,col2 = st.columns(2)
+
+    with col1:
+        st.plotly_chart(fig, use_container_width=True)
+
+    with col2:
+        st.plotly_chart(fig2, use_container_width=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+    #---
+   
+    st.subheader("💳 Financial Overview")
     
     col1, col2 = st.columns(2)
 
@@ -488,8 +544,18 @@ if st.sidebar.button("Evaluate Application"):
 
 
 # ---------------- ROW 3 : RISK DISTRIBUTION ---------------- #
+    #Tách Risk distribution
 
-    st.subheader("Risk Distribution")
+    st.markdown('<div class="card section-space">', unsafe_allow_html=True)
+
+    st.markdown('<div class="section-title">Risk Distribution</div>', unsafe_allow_html=True)
+
+    st.plotly_chart(fig3, use_container_width=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+    #----
+
+    st.subheader("📈Risk Distribution")
     risk_chart = pd.DataFrame({
        "Type":["Low Risk","High Risk"],
        "Probability":[risk,1-risk]
