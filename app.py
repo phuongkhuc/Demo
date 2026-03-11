@@ -378,7 +378,6 @@ if st.sidebar.button("Evaluate Application"):
     st.markdown('<div class="card">', unsafe_allow_html=True)
 
     st.markdown('<div class="section-title">Final Decision</div>', unsafe_allow_html=True)
-    st.subheader("Final Decision")
 
     st.metric("Decision",decision)
 
@@ -422,18 +421,7 @@ if st.sidebar.button("Evaluate Application"):
 
     st.markdown('<div class="section-title">AI Risk Assessment Dashboard</div>', unsafe_allow_html=True)
 
-    col1,col2,col3 = st.columns(3)
 
-    with col1:
-        st.metric("Default Probability", f"{risk*100:.2f}%")
-
-    with col2:
-        st.metric("Risk Level", f"{color} {level}")
-
-    with col3:
-        st.metric("Rule Engine", rule_result)
-
-    st.markdown('</div>', unsafe_allow_html=True)
 
     st.subheader("📊 AI Risk Assessment Dashboard")
 
@@ -463,7 +451,10 @@ if st.sidebar.button("Evaluate Application"):
     with col3:
         st.metric("Rule Engine",rule_result)
 
+    st.markdown('</div>', unsafe_allow_html=True)
+    
     st.divider()
+
     
    # ---------- ROW 2 : MAIN CHARTS ---------- #
     #Tách Chart section
