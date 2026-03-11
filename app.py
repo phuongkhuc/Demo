@@ -377,8 +377,8 @@ if st.sidebar.button("Evaluate Application"):
     )
     st.markdown('<div class="card">', unsafe_allow_html=True)
 
-    st.markdown('<div class="section-title">Final Decision</div>', unsafe_allow_html=True)
-
+    st.subheader("⚖️ Final Decision")
+    
     st.metric("Decision",decision)
 
     if decision == "Approve":
@@ -418,9 +418,7 @@ if st.sidebar.button("Evaluate Application"):
     # Tách KPI dashboard section
 
     st.markdown('<div class="card section-space">', unsafe_allow_html=True)
-
-    st.markdown('<div class="section-title">AI Risk Assessment Dashboard</div>', unsafe_allow_html=True)
-
+    
     st.subheader("📊 AI Risk Assessment Dashboard")
 
      # ---------------- ROW 1: METRICS ---------------- #
@@ -510,8 +508,6 @@ if st.sidebar.button("Evaluate Application"):
 
     st.markdown('<div class="card section-space">', unsafe_allow_html=True)
 
-    st.markdown('<div class="section-title">Risk Distribution</div>', unsafe_allow_html=True)
-
 
     #----
 
@@ -539,7 +535,7 @@ if st.sidebar.button("Evaluate Application"):
 
 # ---------- ROW 4 : CUSTOMER DATA ---------- #
 
-    st.subheader("Customer Data")
+    st.subheader("📝 Customer Data")
 
     st.dataframe(data)   
 
