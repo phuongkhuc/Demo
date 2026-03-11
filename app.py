@@ -8,8 +8,37 @@ from sklearn.ensemble import RandomForestClassifier
 
 st.set_page_config(page_title="AI Loan Risk System", layout="wide")
 
-st.title("🏦 AI Loan Risk Scoring Dashboard")
-st.write("Hybrid AI + Rule Engine Loan Risk Evaluation")
+st.markdown("""
+<style>
+
+html, body, [class*="css"]  {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+h1 {
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+h2, h3 {
+    font-weight: 600;
+}
+
+[data-testid="stMetricValue"]{
+    font-size:28px;
+    font-weight:700;
+}
+
+[data-testid="stMetricLabel"]{
+    font-size:14px;
+    color:#6b7280;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+st.title("AI Credit Risk Decision System")
+st.caption("Hybrid Machine Learning + Rule Engine")
 
 # ---------------- LOAD MODEL ---------------- #
 
@@ -386,18 +415,20 @@ if st.sidebar.button("Evaluate Application"):
     col1,col2,col3 = st.columns(3)
 
     with col1:
-        st.metric("Default Probability",f"{risk*100:.2f}%")
+        st.metric("Default Probability",f"{risk*100:.2f}%",
+                  help="Probability of customer default predicted by ML model"
+        )
 
     with col2:
 
         if risk < 0.3:
-            level = "Low Risk"
+            level = "LOW RISK"
             color = "🟢"
         elif risk < 0.6:
-            level = "Medium Risk"
+            level = "MEDIUM RISK"
             color = "🟡"
         else:
-            level = "High Risk"
+            level = "HIGH RISK"
             color = "🔴"
 
         st.metric("Risk Level",f"{color} {level}")
@@ -419,10 +450,11 @@ if st.sidebar.button("Evaluate Application"):
            title={'text': "Default Risk (%)"},
            gauge={
                'axis': {'range':[0,100]},
+               'bar': {'color':"#111827"},
                'steps':[
-                   {'range':[0,30],'color':"lightgreen"},
-                   {'range':[30,60],'color':"yellow"},
-                   {'range':[60,100],'color':"salmon"}
+                   {'range':[0,30],'color':"#22c55e"},
+                   {'range':[30,60],'color':"#facc15"},
+                   {'range':[60,100],'color':"#ef4444"}
             ]
         }
     ))
@@ -454,13 +486,18 @@ if st.sidebar.button("Evaluate Application"):
     st.subheader("Risk Distribution")
     risk_chart = pd.DataFrame({
        "Type":["Low Risk","High Risk"],
-       "Probability":[1-risk,risk]
+       "Probability":[risk,1-risk]
 })
 
     fig3 = px.pie(
         risk_chart,
         names="Type",
         values="Probability",
+        color="Type",
+        color_discrete_map={
+             "High Risk":"#ef4444",
+             "Low Risk":"#22c55e"
+    },
         title="Risk Probability Distribution"
 )
 
