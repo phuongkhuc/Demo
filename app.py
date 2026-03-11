@@ -421,8 +421,6 @@ if st.sidebar.button("Evaluate Application"):
 
     st.markdown('<div class="section-title">AI Risk Assessment Dashboard</div>', unsafe_allow_html=True)
 
-
-
     st.subheader("📊 AI Risk Assessment Dashboard")
 
      # ---------------- ROW 1: METRICS ---------------- #
@@ -461,15 +459,6 @@ if st.sidebar.button("Evaluate Application"):
 
     st.markdown('<div class="card section-space">', unsafe_allow_html=True)
 
-    col1,col2 = st.columns(2)
-
-    with col1:
-        st.plotly_chart(fig, use_container_width=True)
-
-    with col2:
-        st.plotly_chart(fig2, use_container_width=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)
     #---
    
     st.subheader("💳 Financial Overview")
@@ -514,7 +503,8 @@ if st.sidebar.button("Evaluate Application"):
 
        st.plotly_chart(fig2, use_container_width=True, key="finance_chart")
 
-
+    st.markdown('</div>', unsafe_allow_html=True)
+    
 # ---------------- ROW 3 : RISK DISTRIBUTION ---------------- #
     #Tách Risk distribution
 
@@ -522,9 +512,7 @@ if st.sidebar.button("Evaluate Application"):
 
     st.markdown('<div class="section-title">Risk Distribution</div>', unsafe_allow_html=True)
 
-    st.plotly_chart(fig3, use_container_width=True)
 
-    st.markdown('</div>', unsafe_allow_html=True)
     #----
 
     st.subheader("📈Risk Distribution")
@@ -546,6 +534,8 @@ if st.sidebar.button("Evaluate Application"):
 )
 
     st.plotly_chart(fig3, use_container_width=True, key="risk_distribution")
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------- ROW 4 : CUSTOMER DATA ---------- #
 
