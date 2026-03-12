@@ -216,7 +216,7 @@ def detect_(national_id):
         return "ETB"
     else:
         return "NTB"
-         
+    st.write("Customer type:", customer_type)     
 def customer_screening(is_blacklisted):
 
     # ETB → check blacklist
