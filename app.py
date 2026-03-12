@@ -376,7 +376,10 @@ if st.sidebar.button("Evaluate Application"):
          existing_debt
     )
     st.markdown('<div class="card">', unsafe_allow_html=True)
+ 
 
+# ---------------- OUTPUT ---------------- #
+    
     st.subheader("⚖️ Final Decision")
     
     st.metric("Decision",decision)
@@ -411,9 +414,6 @@ if st.sidebar.button("Evaluate Application"):
 
     elif risk >= 0.7:
         st.success("Low default risk → Auto approval possible")
- 
-
-# ---------------- OUTPUT ---------------- #
 
     # Tách KPI dashboard section
 
