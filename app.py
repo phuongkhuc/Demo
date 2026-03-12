@@ -355,7 +355,7 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
 if st.sidebar.button("Evaluate Application"):
 
     age = calculate_age(dob)  
-    customer_type = detect_customer_type(national_id, internal_df)
+    customer_type = detect_customer_type(national_id)
 
     
     loan_percent_income = loan_amount / monthly_income
