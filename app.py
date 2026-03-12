@@ -286,7 +286,7 @@ def capacity_rules(monthly_income, dti_1, risk):
 def decision_matrix(,risk,credit_score,dti_2,
                     loan_amount,monthly_income,existing_debt):
 
-    if  == "NTB":
+    if customer_type == "NTB":
 
         # ----- HIGH RISK SCORE (>=0.7) -----
 
@@ -341,7 +341,7 @@ def decision_matrix(,risk,credit_score,dti_2,
         return "Reject",0
 
     # ---------- ETB ----------
-    if  == "ETB":
+    if customer_type == "ETB":
 
         if 0.7 <= risk <= 1 and dti_2 <= 0.5:
 
