@@ -432,15 +432,15 @@ if st.sidebar.button("Evaluate Application"):
 
     with col2:
 
-        if risk < 0.3:
+        if risk < 0.4:
             level = "LOW RISK"
             color = "🟢"
-        elif risk < 0.6:
+        elif risk < 0.7:
             level = "MEDIUM RISK"
             color = "🟡"
         else:
-            level = "HIGH RISK"
-            color = "🔴"
+            level = "LOW DEFAULT RISK"
+            color = "🟢"
 
         st.metric("Risk Level",f"{color} {level}")
 
