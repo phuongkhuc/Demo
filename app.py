@@ -523,7 +523,6 @@ if st.sidebar.button("Evaluate Application"):
                 "Loan":"#ef4444"
     }
 )
-        fig2.update_traces(textposition="outside")
         
        st.plotly_chart(fig2, use_container_width=True, key="finance_chart")
 
