@@ -92,9 +92,14 @@ model = load_model()
 # ---------------- SIDEBAR ---------------- #
 
 st.sidebar.header("Customer Information")
+from datetime import date
 
-age = st.sidebar.slider("Age",18,70,30)
-
+dob = st.sidebar.date_input(
+    "Date of Birth",
+    value=date(1995,1,1),
+    min_value=date(1950,1,1),
+    max_value=date.today()
+)
 gender = st.sidebar.selectbox(
     "Gender",
     ["Male","Female"]
@@ -201,6 +206,17 @@ is_fraud = st.sidebar.checkbox("Fraud List")
 
 # ---------------- RULE ENGINE ---------------- #
 
+from datetime import datetime
+
+def calculate_age(dob):
+
+    today = datetime.today()
+
+    age = today.year - dob.year - (
+        (today.month, today.day) < (dob.month, dob.day)
+    )
+
+    return age
 
 def knockout_rules(age,nationality,is_blacklisted,is_fraud,max_dpd,
                    credit_score,monthly_income,dti,risk):
@@ -300,13 +316,15 @@ def decision_matrix(customer_type,risk,credit_score,dti,
 
 if st.sidebar.button("Evaluate Application"):
 
-    loan_percent_income = loan_amount / (monthly_income * 12)
+    loan_percent_income = loan_amount / monthly_income
 
     expense_to_income = monthly_expenses / monthly_income
 
     new_debt = expected_credit_limit * 0.05
 
     dti = (existing_debt + new_debt) / monthly_income
+
+    age = calculate_age(dob)
    
     data = pd.DataFrame({
 
