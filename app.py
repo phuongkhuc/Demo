@@ -283,7 +283,7 @@ def capacity_rules(monthly_income, dti_1, risk):
 
 # ---------------- Decision Matrix (Approve / Partial / Manual) ---------------- #
 
-def decision_matrix(,risk,credit_score,dti_2,
+def decision_matrix(customer_type,risk,credit_score,dti_2,
                     loan_amount,monthly_income,existing_debt):
 
     if customer_type == "NTB":
