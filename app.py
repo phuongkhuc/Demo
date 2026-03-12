@@ -422,8 +422,8 @@ if st.sidebar.button("Evaluate Application"):
             level = "MEDIUM RISK"
             color = "🟡"
         else:
-            level = "LOW DEFAULT RISK"
-            color = "🟢"
+            level = "HIGH RISK"
+            color = "🔴"
 
         st.metric("Risk Level",f"{color} {level}")
 
@@ -523,7 +523,8 @@ if st.sidebar.button("Evaluate Application"):
                 "Loan":"#ef4444"
     }
 )
-
+        fig2.update_traces(textposition="outside")
+        
        st.plotly_chart(fig2, use_container_width=True, key="finance_chart")
 
     st.markdown('</div>', unsafe_allow_html=True)
@@ -539,7 +540,7 @@ if st.sidebar.button("Evaluate Application"):
     st.subheader("📈Risk Distribution")
     risk_chart = pd.DataFrame({
        "Type":["Low Risk","High Risk"],
-       "Probability":[risk,1-risk]
+       "Probability":[1-risk,risk]
 })
 
     fig3 = px.pie(
