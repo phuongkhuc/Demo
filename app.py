@@ -212,7 +212,7 @@ def knockout_rules(age,nationality):
                        
 def detect_customer_type(national_id, internal_df):
 
-    if national_id in internal_df["national_id"].astype(str).values:
+    if str(national_id) in internal_df["national_id"].values:
         return "ETB"
     else:
         return "NTB"
