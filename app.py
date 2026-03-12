@@ -212,7 +212,7 @@ def knockout_rules(age,nationality):
                        
 def detect_customer_type(national_id):
 
-    if national_id in internal_df["national_id"].values:
+    if national_id in internal_df["national_id"].astype(str).values:
         return "ETB"
     else:
         return "NTB"
@@ -355,7 +355,7 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
 if st.sidebar.button("Evaluate Application"):
 
     age = calculate_age(dob)  
-    customer_type = detect_customer_type(national_id)
+    customer_type = detect_customer_type(national_id, internal.df)
 
     
     loan_percent_income = loan_amount / monthly_income
