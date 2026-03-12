@@ -52,7 +52,7 @@ st.caption("Hybrid Machine Learning + Rule Engine")
 @st.cache_resource
 def load_model():
 
-    credit_df = pd.read_csv("credit_data_processed.csv")
+    df = pd.read_csv("credit_data_processed.csv")
     internal_df = pd.read_csv("Internal_mock_data_20k.csv")
     cic_df = pd.read_csv("CIC_mock_data_100k.csv")
 
