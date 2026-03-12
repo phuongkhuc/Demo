@@ -496,7 +496,7 @@ if st.sidebar.button("Evaluate Application"):
            x="Category",
            y="Amount",
            color="Category",
-           title="Customer Financial Overview"
+           title="Customer Financial Overview",
            color_discrete_map={
                 "Income":"#3b82f6",
                 "Expenses":"#f59e0b",
