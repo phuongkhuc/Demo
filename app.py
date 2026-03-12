@@ -217,7 +217,7 @@ def detect_(national_id):
     else:
         return "NTB"
          
-def customer_screening(, is_blacklisted):
+def customer_screening(is_blacklisted):
 
     # ETB → check blacklist
     if  == "ETB":
