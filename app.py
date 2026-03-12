@@ -371,9 +371,6 @@ if st.sidebar.button("Evaluate Application"):
     new_debt = loan_amount * 0.05
 
     dti_2 = (existing_debt + new_debt) / monthly_income
-    
-
-    st.write("Customer Type:", customer_type)
 
 
     customer_type = detect_customer_type(national_id, internal_df)
