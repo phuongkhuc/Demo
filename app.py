@@ -5,8 +5,10 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 from sklearn.ensemble import RandomForestClassifier
+from datetime import datetime
 
-st.set_page_config(page_title="AI Loan Risk System", layout="wide")
+st.set_page_config(page_title="AI Credit Decision System", layout="wide")
+st.title("AI Credit Risk Decision System")
 
 st.markdown("""
 <style>
@@ -46,15 +48,16 @@ st.markdown("""
 st.title("AI Credit Risk Decision System")
 st.caption("Hybrid Machine Learning + Rule Engine")
 
-# ---------------- LOAD MODEL ---------------- #
+# ---------------- LOAD DATA ---------------- #
 
 @st.cache_resource
 def load_model():
 
-    df = pd.read_csv("credit_data_processed.csv")
+    credit_df = pd.read_csv("credit_data_processed.csv")
     internal_df = pd.read_csv("Internal_mock_data_20k.csv")
     cic_df = pd.read_csv("CIC_mock_data_100k.csv")
 
+    internal_df["national_id"] = internal_df["national_id"].astype(str)
     cic_df["national_id"] = cic_df["national_id"].astype(str)
 
     # remove commas
@@ -69,6 +72,7 @@ def load_model():
 
     df = df.dropna()
 
+# ---------------- TRAIN MODEL ---------------- #
     features = [
         "age",
         "monthly_income",
@@ -77,30 +81,23 @@ def load_model():
         "employment_years",
         "credit_history_years"
     ]
-
+    credit_df = credit_df.dropna()
+   
     X = df[features]
     y = df["loan_status"]
 
-    model = RandomForestClassifier(
-        n_estimators=100,
-        random_state=42
-    )
+    model = RandomForestClassifier(n_estimators=100,random_state=42)
 
     model.fit(X, y)
 
     return model
-
 
 model = load_model()
 
 # ---------------- SIDEBAR ---------------- #
 
 st.sidebar.header("Customer Information")
-national_id = st.sidebar.text_input(
-    "National ID",
-    value="123456789"
-)
-from datetime import date
+national_id = st.sidebar.text_input("National ID")
 
 dob = st.sidebar.date_input(
     "Date of Birth",
@@ -184,11 +181,6 @@ nationality = st.sidebar.selectbox(
     ["Vietnam","Other"]
 )
 
-customer_type = st.sidebar.selectbox(
-    "Customer Type",
-    ["NTB","ETB"]
-)
-
 existing_debt = st.sidebar.number_input(
     "Existing Monthly Debt ($)",
     min_value=0,
@@ -196,22 +188,12 @@ existing_debt = st.sidebar.number_input(
     value=500
 )
 
-expected_credit_limit = st.sidebar.number_input(
-    "Expected Credit Limit ($)",
-    min_value=1000,
-    max_value=50000,
-    value=10000
-)
-
 max_dpd = st.sidebar.slider(
     "Max DPD (Days Past Due)",
     0,120,0
 )
 
-
 # ---------------- RULE ENGINE ---------------- #
-
-from datetime import datetime
 
 def calculate_age(dob):
 
@@ -233,9 +215,9 @@ def knockout_rules(age,nationality):
 
     return "Pass"                      
                        
-def detect_customer_type(national_id, internal_df):
+def detect_customer_type(national_id):
 
-    if national_id in internal_df["national_id"].astype(str).values:
+    if national_id in internal_df["national_id"].values:
         return "ETB"
     else:
         return "NTB"
@@ -373,10 +355,14 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
 
         return "Reject", 0
 
-# ---------------- PREDICTION ---------------- #
+# ---------------- EVALUTE ---------------- #
 
 if st.sidebar.button("Evaluate Application"):
 
+    age = calculate_age(dob)  
+    customer_type = detect_customer_type(national_id, internal_df)
+
+    
     loan_percent_income = loan_amount / monthly_income
 
     expense_to_income = monthly_expenses / monthly_income
@@ -387,9 +373,9 @@ if st.sidebar.button("Evaluate Application"):
 
     dti_2 = (existing_debt + new_debt) / monthly_income
 
-    age = calculate_age(dob)
+    
    
-    customer_type = detect_customer_type(national_id, internal_df)
+    
 
     st.write("Customer Type:", customer_type)
    
@@ -410,7 +396,7 @@ if st.sidebar.button("Evaluate Application"):
 
         st.stop()
     
-
+  # ----- ML prediction -----
     
     data = pd.DataFrame({
 
