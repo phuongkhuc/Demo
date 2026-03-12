@@ -288,7 +288,7 @@ def capacity_rules(monthly_income, dti_1, risk):
     existing_debt = cic_row["existing_debt_obligations"]
     dti_1 = existing_debt / monthly_income
     
-     if dti_1 >= 0.5:
+    if dti_1 >= 0.5:
         return "Reject", "Debt-to-income exceeds 50%"
 
     # Rule 3: ML risk
