@@ -380,6 +380,44 @@ if st.sidebar.button("Evaluate Application"):
 
 # ---------------- OUTPUT ---------------- #
     
+
+    # Tách KPI dashboard section
+
+    
+    st.subheader("📊 AI Risk Assessment Dashboard")
+
+     # ---------------- ROW 1: METRICS ---------------- #
+
+    col1,col2,col3 = st.columns(3)
+
+    with col1:
+        st.metric("Default Probability",f"{risk*100:.2f}%",
+                  help="Probability of customer default predicted by ML model"
+        )
+
+    with col2:
+
+        if risk < 0.4:
+            level = "LOW RISK"
+            color = "🟢"
+        elif risk < 0.7:
+            level = "MEDIUM RISK"
+            color = "🟡"
+        else:
+            level = "LOW DEFAULT RISK"
+            color = "🟢"
+
+        st.metric("Risk Level",f"{color} {level}")
+
+    with col3:
+        st.metric("Rule Engine",rule_result)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    st.divider()
+#------
+    
+    st.markdown('<div class="card section-space">', unsafe_allow_html=True) 
     st.subheader("⚖️ Final Decision")
     
     st.metric("Decision",decision)
@@ -414,43 +452,8 @@ if st.sidebar.button("Evaluate Application"):
 
     elif risk >= 0.7:
         st.success("Low default risk → Auto approval possible")
-
-    # Tách KPI dashboard section
-
-    st.markdown('<div class="card section-space">', unsafe_allow_html=True)
-    
-    st.subheader("📊 AI Risk Assessment Dashboard")
-
-     # ---------------- ROW 1: METRICS ---------------- #
-
-    col1,col2,col3 = st.columns(3)
-
-    with col1:
-        st.metric("Default Probability",f"{risk*100:.2f}%",
-                  help="Probability of customer default predicted by ML model"
-        )
-
-    with col2:
-
-        if risk < 0.4:
-            level = "LOW RISK"
-            color = "🟢"
-        elif risk < 0.7:
-            level = "MEDIUM RISK"
-            color = "🟡"
-        else:
-            level = "LOW DEFAULT RISK"
-            color = "🟢"
-
-        st.metric("Risk Level",f"{color} {level}")
-
-    with col3:
-        st.metric("Rule Engine",rule_result)
-
+        
     st.markdown('</div>', unsafe_allow_html=True)
-    
-    st.divider()
-
     
    # ---------- ROW 2 : MAIN CHARTS ---------- #
     #Tách Chart section
