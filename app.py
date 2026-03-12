@@ -210,17 +210,17 @@ def knockout_rules(age,nationality):
 
     return "Pass"                      
                        
-def detect_customer_type(national_id):
+def detect_(national_id):
 
     if national_id in internal_df["national_id"].astype(str).values:
         return "ETB"
     else:
         return "NTB"
          
-def customer_screening(customer_type, is_blacklisted, is_fraud):
+def customer_screening(, is_blacklisted, is_fraud):
 
     # ETB → check blacklist
-    if customer_type == "ETB":
+    if  == "ETB":
 
         if is_blacklisted or is_fraud:
             return "Reject"
@@ -278,10 +278,10 @@ def capacity_rules(monthly_income, dti_1, risk):
 
 # ---------------- Decision Matrix (Approve / Partial / Manual) ---------------- #
 
-def decision_matrix(customer_type,risk,credit_score,dti_2,
+def decision_matrix(,risk,credit_score,dti_2,
                     loan_amount,monthly_income,existing_debt):
 
-    if customer_type == "NTB":
+    if  == "NTB":
 
         # ----- HIGH RISK SCORE (>=0.7) -----
 
@@ -336,7 +336,7 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
         return "Reject",0
 
     # ---------- ETB ----------
-    if customer_type == "ETB":
+    if  == "ETB":
 
         if 0.7 <= risk <= 1 and dti_2 <= 0.5:
 
@@ -355,7 +355,7 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
 if st.sidebar.button("Evaluate Application"):
 
     age = calculate_age(dob)  
-    customer_type = detect_customer_type(national_id, internal.df)
+    customer_type = detect_customer_type(national_id, internal_df)
 
     
     loan_percent_income = loan_amount / monthly_income
