@@ -414,7 +414,6 @@ if st.sidebar.button("Evaluate Application"):
 
     st.markdown('</div>', unsafe_allow_html=True)
     
-    st.divider()
 #------
     
     st.markdown('<div class="card section-space">', unsafe_allow_html=True) 
