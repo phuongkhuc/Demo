@@ -107,7 +107,7 @@ employment_years = st.sidebar.slider(
 
 employment_status = st.sidebar.selectbox(
     "Employment Status",
-    ["full_time","part_time","self_employed","unemployed"]
+    ["full time","part time","self employed","unemployed"]
 )
 
 monthly_income = st.sidebar.number_input(
@@ -314,7 +314,7 @@ if st.sidebar.button("Evaluate Application"):
         "gender":[1 if gender=="Male" else 0],
         "employment_years":[employment_years],
         "employment_status":[
-            {"full_time":0,"part_time":1,"self_employed":2,"unemployed":3}[employment_status]
+            {"full time":0,"part time":1,"self employed":2,"unemployed":3}[employment_status]
         ],
         "monthly_income":[monthly_income],
         "monthly_expenses":[monthly_expenses],
