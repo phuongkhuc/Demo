@@ -553,9 +553,13 @@ if st.sidebar.button("Evaluate Application"):
     
     st.markdown('<div class="card section-space">', unsafe_allow_html=True) 
     st.subheader("⚖️ Final Decision")
-    
-    st.metric("Decision",decision)
+    st.write("Customer Type:", customer_type)
 
+    st.write("Risk Score:", round(risk,3))
+
+    st.write("DTI:", round(dti_2,2))
+
+    st.write("Decision:", decision)
     if decision == "Approve":
        st.success(f"Approved Limit: ${limit}")
 
