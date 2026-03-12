@@ -52,6 +52,10 @@ st.caption("Hybrid Machine Learning + Rule Engine")
 def load_model():
 
     df = pd.read_csv("credit_data_processed.csv")
+    internal_df = pd.read_csv("Internal_mock_data_20k.csv")
+    cic_df = pd.read_csv("CIC_mock_data_100k.csv")
+
+    cic_df["national_id"] = cic_df["national_id"].astype(str)
 
     # remove commas
     df = df.replace(",", "", regex=True)
@@ -92,6 +96,10 @@ model = load_model()
 # ---------------- SIDEBAR ---------------- #
 
 st.sidebar.header("Customer Information")
+national_id = st.sidebar.text_input(
+    "National ID",
+    value="123456789"
+)
 from datetime import date
 
 dob = st.sidebar.date_input(
@@ -157,7 +165,7 @@ education = st.sidebar.selectbox(
 )
 
 loan_intent = st.sidebar.selectbox(
-    "Loan Purpose",
+    "Loan Intent",
     ["debt consolidation","education","home improvement","medical","personal","venture"]
 )
 
@@ -200,9 +208,6 @@ max_dpd = st.sidebar.slider(
     0,120,0
 )
 
-is_blacklisted = st.sidebar.checkbox("Blacklisted")
-
-is_fraud = st.sidebar.checkbox("Fraud List")
 
 # ---------------- RULE ENGINE ---------------- #
 
@@ -218,8 +223,7 @@ def calculate_age(dob):
 
     return age
 
-def knockout_rules(age,nationality,is_blacklisted,is_fraud,max_dpd,
-                   credit_score,monthly_income,dti,risk):
+def knockout_rules(age,nationality):
 
     if age < 18 or age > 65:
         return "Reject"
@@ -227,25 +231,72 @@ def knockout_rules(age,nationality,is_blacklisted,is_fraud,max_dpd,
     if nationality != "Vietnam":
         return "Reject"
 
-    if is_blacklisted or is_fraud:
-        return "Reject"
+    return "Pass"                      
+                       
+ def detect_customer_type(national_id, internal_df):
 
+    if national_id in internal_df["national_id"].astype(str).values:
+        return "ETB"
+    else:
+        return "NTB"
+        
+ def customer_screening(customer_type, is_blacklisted, is_fraud):
+
+    # ETB → check blacklist
+    if customer_type == "ETB":
+
+        if is_blacklisted or is_fraud:
+            return "Reject"
+
+        return "Pass"
+
+ def get_cic_data(national_id):
+
+    row = cic_df[cic_df["national_id"] == str(national_id)]
+
+    if row.empty:
+        return None
+
+    return row.iloc[0]
+
+ def cic_rules(cic_row):
+
+    if cic_row is None:
+        return "Pass", None, None
+
+    max_dpd = cic_row["max_dpd"]
+    credit_score = cic_row["credit_score"]
+    existing_debt = cic_row["existing_debt_obligations"]
+
+    # Rule 1: DPD
     if max_dpd > 30:
-        return "Reject"
+        return "Reject", max_dpd, credit_score
 
-    if credit_score <= 430:
-        return "Reject"
+    # Rule 2: Credit score
+    if 0 < credit_score <= 430:
+        return "Reject", max_dpd, credit_score
 
+    return "Pass", max_dpd, credit_score
+
+ def capacity_rules(monthly_income, dti_1, risk):
+
+    # Rule 1: minimum income
     if monthly_income < 500:
-        return "Reject"
+        return "Reject", "Income below minimum requirement"
 
-    if dti >= 0.5:
-        return "Reject"
+    # Rule 2: DTI
+    existing_debt = cic_row["existing_debt_obligations"]
+    dti_1 = existing_debt / monthly_income
+    
+     if dti_1 >= 0.5:
+        return "Reject", "Debt-to-income exceeds 50%"
 
+    # Rule 3: ML risk
     if risk < 0.7:
-        return "Reject"
+        return "Reject", "ML risk score below threshold"
 
-    return "Pass"
+    return "Pass", "Capacity rules passed"
+     
 
 
 # ---------------- Decision Matrix (Approve / Partial / Manual) ---------------- #
@@ -275,7 +326,9 @@ def decision_matrix(customer_type,risk,credit_score,dti,
 
             if pd.isna(credit_score) and 0.36 < dti <= 0.5:
 
-                limit = (0.36*monthly_income-existing_debt)/0.05
+                limit = (0.36 * monthly_income - existing_debt)/0.05
+                limit = max(limit,0)
+                limit = int(limit)
                 return "Partial Approve", int(limit)
 
 
@@ -320,12 +373,37 @@ if st.sidebar.button("Evaluate Application"):
 
     expense_to_income = monthly_expenses / monthly_income
 
-    new_debt = expected_credit_limit * 0.05
+    dti_1 = existing_debt / monthly_income
 
-    dti = (existing_debt + new_debt) / monthly_income
+    new_debt_obligations = loan_amount * 0.05
+
+    dti_2 = (existing_debt + new_debt_obligations) / monthly_income
 
     age = calculate_age(dob)
    
+    customer_type = detect_customer_type(national_id, internal_df)
+
+    st.write("Customer Type:", customer_type)
+   
+    # ---------------- CIC DATA ---------------- #
+
+    cic_row = get_cic_data(national_id)
+
+    cic_result, max_dpd, credit_score = cic_rules(cic_row)
+
+    if cic_result == "Reject":
+
+        st.error("Rejected by CIC rule")
+        st.write("Max DPD:", max_dpd)
+        st.write("Credit Score:", credit_score)
+
+        decision = "Reject"
+        limit = 0
+
+        st.stop()
+    
+
+    
     data = pd.DataFrame({
 
         "age":[age],
@@ -361,20 +439,43 @@ if st.sidebar.button("Evaluate Application"):
     
     data = data[model.feature_names_in_]
     risk = model.predict_proba(data)[0][1]
-
-    st.write("Risk probability:", risk)
+    existing_debt = cic_row["existing_debt_obligations"]
     
+    st.write("Risk probability:", risk)
 
-    new_debt = expected_credit_limit * 0.05
-    dti = (existing_debt + new_debt) / monthly_income
+    new_debt_obligations = loan_amount * 0.05
+    dti_2 = (existing_debt + new_debt_obligations) / monthly_income
+
+    screening = customer_screening(
+        customer_type,
+        is_blacklisted,
+        is_fraud,
+        max_dpd
+)
+
+    if screening == "Reject":
+
+        decision = "Reject"
+        limit = 0
+
+    else:
+        rule_result = knockout_rules(
+            age,
+            nationality,
+            is_blacklisted,
+            is_fraud,
+            max_dpd,
+            credit_score,
+            monthly_income,
+            dti_1,
+            risk
+    )
+
+
 
     rule_result = knockout_rules(
         age,
-        nationality,
-        is_blacklisted,
-        is_fraud,
-        max_dpd,credit_score,
-        monthly_income,dti,risk
+        nationality
 )
 
     if rule_result == "Reject":
@@ -388,19 +489,53 @@ if st.sidebar.button("Evaluate Application"):
          customer_type,
          risk,
          credit_score,
-         dti,
+         dti_2,
          expected_credit_limit,
          monthly_income,
          existing_debt
     )
+
+     capacity_result, capacity_message = capacity_rules(
+         monthly_income,
+         dti_1,
+         risk
+)
+
+     if capacity_result == "Reject":
+
+        st.error(capacity_message)
+
+        decision = "Reject"
+        limit = 0
+
+        st.stop()
+         
     st.markdown('<div class="card">', unsafe_allow_html=True)
  
 
 # ---------------- OUTPUT ---------------- #
-    
+
+    st.subheader("📊 CIC Data")
+
+    cic_display = pd.DataFrame({
+        "Credit Score":[credit_score],
+        "Max DPD":[max_dpd],
+        "Existing Debt":[existing_debt]
+})
+
+    st.dataframe(cic_display)
+
+    st.subheader("Capacity Check")
+    capacity_df = pd.DataFrame({
+        "Monthly Income":[monthly_income],
+        "Existing Debt":[existing_debt],
+        "DTI":[round(dti_1,2)],
+        "ML Risk":[round(risk,2)]
+})
+
+    st.dataframe(capacity_df)
 
     # Tách KPI dashboard section
-
     
     st.subheader("📊 AI Risk Assessment Dashboard")
 
