@@ -210,22 +210,27 @@ def knockout_rules(age,nationality):
 
     return "Pass"                      
                        
-def detect_(national_id):
+def detect_customer_type(national_id, internal_df):
 
     if national_id in internal_df["national_id"].astype(str).values:
         return "ETB"
     else:
         return "NTB"
-    st.write("Customer type:", customer_type)     
-def customer_screening(is_blacklisted):
+  
+def customer_screening(customer_type, is_blacklisted):
 
     # ETB → check blacklist
-    if  == "ETB":
+    if customer_type == "ETB":
 
         if is_blacklisted:
             return "Reject"
 
+        return "Pass"    
+    
+    # NTB → skip blacklist
+    if customer_type == "NTB":
         return "Pass"
+    
 
 def get_cic_data(national_id):
 
@@ -355,7 +360,6 @@ def decision_matrix(,risk,credit_score,dti_2,
 if st.sidebar.button("Evaluate Application"):
 
     age = calculate_age(dob)  
-    customer_type = detect_customer_type(national_id, internal_df)
 
     
     loan_percent_income = loan_amount / monthly_income
@@ -367,13 +371,23 @@ if st.sidebar.button("Evaluate Application"):
     new_debt = loan_amount * 0.05
 
     dti_2 = (existing_debt + new_debt) / monthly_income
-
-    
-   
     
 
     st.write("Customer Type:", customer_type)
-   
+
+
+    customer_type = detect_customer_type(national_id, internal_df)
+
+    screening_result = customer_screening(customer_type, is_blacklisted)
+
+    if screening_result == "Reject":
+
+        decision = "Reject"
+        limit = 0
+
+        st.error("Rejected by internal blacklist rule")
+
+        st.stop()
     # ---------------- CIC DATA ---------------- #
 
     cic_row = get_cic_data(national_id)
