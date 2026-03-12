@@ -495,13 +495,13 @@ if st.sidebar.button("Evaluate Application"):
          existing_debt
     )
 
-     capacity_result, capacity_message = capacity_rules(
+    capacity_result, capacity_message = capacity_rules(
          monthly_income,
          dti_1,
          risk
 )
 
-     if capacity_result == "Reject":
+    if capacity_result == "Reject":
 
         st.error(capacity_message)
 
