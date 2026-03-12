@@ -301,69 +301,77 @@ def capacity_rules(monthly_income, dti_1, risk):
 
 # ---------------- Decision Matrix (Approve / Partial / Manual) ---------------- #
 
-def decision_matrix(customer_type,risk,credit_score,dti,
-                    expected_credit_limit,monthly_income,existing_debt):
+def decision_matrix(customer_type,risk,credit_score,dti_2,
+                    loan_amount,monthly_income,existing_debt):
 
     if customer_type == "NTB":
 
         # ----- HIGH RISK SCORE (>=0.7) -----
 
-        if risk >= 0.7:
+        if 0.7 <= risk <= 1:
 
-            if credit_score >= 570 and dti <= 0.5:
-                return "Approve", expected_credit_limit
+            if credit_score >= 570 and dti_2 <= 0.5:
+                return "Approve", loan_amount
 
-            if 431 <= credit_score < 570 and dti <= 0.36:
-                return "Approve", expected_credit_limit
+            if 431 <= credit_score < 570 and dti_2 <= 0.36:
+                return "Approve", loan_amount
 
-            if 431 <= credit_score < 570 and 0.36 < dti <= 0.5:
+            if 431 <= credit_score < 570 and 0.36 < dti_2 <= 0.5:
 
                 limit = (0.36*monthly_income-existing_debt)/0.05
-                return "Partial Approve", int(limit)
+                limit = int(limit // 1000 * 1000)
+                return "Partial Approve", limit
 
-            if pd.isna(credit_score) and dti <= 0.36:
-                return "Approve", expected_credit_limit
+            if pd.isna(credit_score) and dti_2 <= 0.36:
+                return "Approve", loan_amount
 
-            if pd.isna(credit_score) and 0.36 < dti <= 0.5:
+            if pd.isna(credit_score) and 0.36 < dti_2 <= 0.5:
 
                 limit = (0.36 * monthly_income - existing_debt)/0.05
-                limit = max(limit,0)
-                limit = int(limit)
-                return "Partial Approve", int(limit)
+                limit = int(limit // 1000 * 1000)
+                return "Partial Approve", limit
 
 
         # ----- MEDIUM RISK (False positive zone) -----
 
         if 0.5 <= risk < 0.7:
 
-            if credit_score >= 570 and dti <= 0.36:
-                return "Approve", expected_credit_limit
+            if credit_score >= 570 and dti_2 <= 0.36:
+                return "Approve", loan_amount
 
-            if credit_score >= 570 and 0.36 < dti <= 0.5:
+            if credit_score >= 570 and 0.36 < dti_2 <= 0.5:
+                limit = (0.36*monthly_income)/0.05
+                limit = int(limit // 1000 * 1000)
+                return "Partial Approve", limit
 
-                limit = (0.36*monthly_income-existing_debt)/0.05
-                return "Partial Approve", int(limit)
-
-            if 431 <= credit_score < 570 and dti <= 0.36:
+            if 431 <= credit_score < 570 and dti_2 <= 0.36:
                 return "Manual Review",0
 
-            if 431 <= credit_score < 570 and 0.36 < dti <= 0.5:
+            if 431 <= credit_score < 570 and 0.36 < dti_2 <= 0.5:
                 return "Reject",0
 
-        return "Reject",0
+            if pd.isna(credit_score) and dti_2 <= 0.36:
+                return "Manual Review", 0
 
+            if pd.isna(credit_score) and 0.36 < dti_2 <= 0.5:
+                return "Reject", 0
+        
+        return "Reject",0
 
     # ---------- ETB ----------
-
     if customer_type == "ETB":
 
-        if risk >= 0.7 and credit_score >= 431 and dti <= 0.5:
-            return "Approve", expected_credit_limit
+        if 0.7 <= risk <= 1 and dti_2 <= 0.5:
 
-        if 0.5 <= risk < 0.7 and credit_score >= 431 and dti <= 0.5:
-            return "Manual Review",0
+            if credit_score >= 431 or pd.isna(credit_score):
+                return "Approve", loan_amount
 
-        return "Reject",0
+        if 0.5 <= risk < 0.7 and dti_2 <= 0.5:
+
+            if credit_score >= 431 or pd.isna(credit_score):
+                return "Manual Review", 0
+
+        return "Reject", 0
 
 # ---------------- PREDICTION ---------------- #
 
@@ -375,9 +383,9 @@ if st.sidebar.button("Evaluate Application"):
 
     dti_1 = existing_debt / monthly_income
 
-    new_debt_obligations = loan_amount * 0.05
+    new_debt = loan_amount * 0.05
 
-    dti_2 = (existing_debt + new_debt_obligations) / monthly_income
+    dti_2 = (existing_debt + new_debt) / monthly_income
 
     age = calculate_age(dob)
    
@@ -443,8 +451,8 @@ if st.sidebar.button("Evaluate Application"):
     
     st.write("Risk probability:", risk)
 
-    new_debt_obligations = loan_amount * 0.05
-    dti_2 = (existing_debt + new_debt_obligations) / monthly_income
+    new_debt = loan_amount * 0.05
+    dti_2 = (existing_debt + new_debt) / monthly_income
 
     screening = customer_screening(
         customer_type,
@@ -471,30 +479,7 @@ if st.sidebar.button("Evaluate Application"):
             risk
     )
 
-
-
-    rule_result = knockout_rules(
-        age,
-        nationality
-)
-
-    if rule_result == "Reject":
-
-       decision = "Reject"
-       limit = 0
-
-    else:
-
-       decision,limit = decision_matrix(
-         customer_type,
-         risk,
-         credit_score,
-         dti_2,
-         expected_credit_limit,
-         monthly_income,
-         existing_debt
-    )
-
+    
     capacity_result, capacity_message = capacity_rules(
          monthly_income,
          dti_1,
@@ -509,7 +494,18 @@ if st.sidebar.button("Evaluate Application"):
         limit = 0
 
         st.stop()
-         
+    
+    decision, limit = decision_matrix(
+        customer_type,
+        risk,
+        credit_score,
+        dti_2,
+        loan_amount,
+        monthly_income,
+        existing_debt
+)
+
+    
     st.markdown('<div class="card">', unsafe_allow_html=True)
  
 
