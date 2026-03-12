@@ -8,7 +8,6 @@ from sklearn.ensemble import RandomForestClassifier
 from datetime import datetime
 
 st.set_page_config(page_title="AI Credit Decision System", layout="wide")
-st.title("AI Credit Risk Decision System")
 
 st.markdown("""
 <style>
