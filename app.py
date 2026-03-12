@@ -233,14 +233,14 @@ def knockout_rules(age,nationality):
 
     return "Pass"                      
                        
- def detect_customer_type(national_id, internal_df):
+def detect_customer_type(national_id, internal_df):
 
     if national_id in internal_df["national_id"].astype(str).values:
         return "ETB"
     else:
         return "NTB"
-        
- def customer_screening(customer_type, is_blacklisted, is_fraud):
+         
+def customer_screening(customer_type, is_blacklisted, is_fraud):
 
     # ETB → check blacklist
     if customer_type == "ETB":
@@ -250,7 +250,7 @@ def knockout_rules(age,nationality):
 
         return "Pass"
 
- def get_cic_data(national_id):
+def get_cic_data(national_id):
 
     row = cic_df[cic_df["national_id"] == str(national_id)]
 
@@ -259,7 +259,7 @@ def knockout_rules(age,nationality):
 
     return row.iloc[0]
 
- def cic_rules(cic_row):
+def cic_rules(cic_row):
 
     if cic_row is None:
         return "Pass", None, None
@@ -278,7 +278,7 @@ def knockout_rules(age,nationality):
 
     return "Pass", max_dpd, credit_score
 
- def capacity_rules(monthly_income, dti_1, risk):
+def capacity_rules(monthly_income, dti_1, risk):
 
     # Rule 1: minimum income
     if monthly_income < 500:
