@@ -471,7 +471,7 @@ if st.sidebar.button("Evaluate Application"):
            title={'text': "Default Risk (%)"},
            gauge={
                'axis': {'range':[0,100]},
-               'bar': {'color':"#0f172a"},
+               'bar': {'color':"#1f2937"},
                'steps':[
                    {'range':[0,30],'color':"#22c55e"},
                    {'range':[30,60],'color':"#facc15"},
