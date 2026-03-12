@@ -217,12 +217,12 @@ def detect_(national_id):
     else:
         return "NTB"
          
-def customer_screening(, is_blacklisted, is_fraud):
+def customer_screening(, is_blacklisted):
 
     # ETB → check blacklist
     if  == "ETB":
 
-        if is_blacklisted or is_fraud:
+        if is_blacklisted:
             return "Reject"
 
         return "Pass"
