@@ -98,10 +98,7 @@ st.sidebar.header("Customer Information")
 national_id = st.sidebar.text_input("National ID")
 
 dob = st.sidebar.date_input(
-    "Date of Birth",
-    value=date(1995,1,1),
-    min_value=date(1950,1,1),
-    max_value=date.today()
+    "Date of Birth"
 )
 gender = st.sidebar.selectbox(
     "Gender",
