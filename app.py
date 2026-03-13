@@ -358,7 +358,6 @@ if st.sidebar.button("Evaluate Application"):
 
     dti_2 = (existing_debt_obligations + new_debt) / monthly_income
     
-    customer_type = detect_customer_type(national_id, internal_df)
 
 
     # Knock-out rules, Decision matrix #
