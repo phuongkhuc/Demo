@@ -95,6 +95,7 @@ model = load_model()
 st.sidebar.header("Customer Information")
 national_id = st.sidebar.text_input("National ID")
 
+from datetime import date
 dob = st.sidebar.date_input(
     "Date of Birth",
     value=date(1995,1,1),
