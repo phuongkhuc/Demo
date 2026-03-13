@@ -115,16 +115,12 @@ employment_status = st.sidebar.selectbox(
 
 monthly_income = st.sidebar.number_input(
     "Monthly Income ($)",
-    min_value=500,
-    max_value=20000,
-    value=4000
+
 )
 
 monthly_expenses = st.sidebar.number_input(
     "Monthly Expenses ($)",
-    min_value=0,
-    max_value=15000,
-    value=1500
+
 )
 
 credit_history_years = st.sidebar.slider(
@@ -144,9 +140,7 @@ residence_type = st.sidebar.selectbox(
 
 loan_amount = st.sidebar.number_input(
     "Loan Amount ($)",
-    min_value=1000,
-    max_value=100000,
-    value=20000
+
 )
 
 education = st.sidebar.selectbox(
@@ -176,9 +170,7 @@ nationality = st.sidebar.selectbox(
 
 existing_debt_obligations = st.sidebar.number_input(
     "Existing Monthly Debt ($)",
-    min_value=0,
-    max_value=10000,
-    value=500
+
 )
 
 max_dpd = st.sidebar.slider(
