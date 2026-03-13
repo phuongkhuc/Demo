@@ -366,11 +366,11 @@ if st.sidebar.button("Evaluate Application"):
 
     expense_to_income = monthly_expenses / monthly_income
 
-    dti_1 = existing_debt_obligations / monthly_income
+    dti_1 = existing_debt / monthly_income
 
     new_debt = loan_amount * 0.05
 
-    dti_2 = (existing_debt_obligations + new_debt) / monthly_income
+    dti_2 = (existing_debt + new_debt) / monthly_income
     
     customer_type = detect_customer_type(national_id, internal_df)
 
