@@ -174,7 +174,7 @@ nationality = st.sidebar.selectbox(
     ["Vietnam","Other"]
 )
 
-existing_debt = st.sidebar.number_input(
+existing_debt_obligations = st.sidebar.number_input(
     "Existing Monthly Debt ($)",
     min_value=0,
     max_value=10000,
@@ -247,7 +247,7 @@ def cic_rules(cic_row):
 
     max_dpd = cic_row["max_dpd"]
     credit_score = cic_row["credit_score"]
-    existing_debt = cic_row["existing_debt_obligations"]
+    existing_debt_obligations = cic_row["existing_debt_obligations"]
 
     # Rule 1: DPD
     if max_dpd > 30:
@@ -266,8 +266,8 @@ def capacity_rules(monthly_income, dti_1, risk):
         return "Reject", "Income below minimum requirement"
 
     # Rule 2: DTI
-    existing_debt = cic_row["existing_debt_obligations"]
-    dti_1 = existing_debt / monthly_income
+    existing_debt_obligations = cic_row["existing_debt_obligations"]
+    dti_1 = existing_debt_obligations / monthly_income
     
     if dti_1 >= 0.5:
         return "Reject", "Debt-to-income exceeds 50%"
@@ -283,7 +283,7 @@ def capacity_rules(monthly_income, dti_1, risk):
 # ---------------- Decision Matrix (Approve / Partial / Manual) ---------------- #
 
 def decision_matrix(customer_type,risk,credit_score,dti_2,
-                    loan_amount,monthly_income,existing_debt):
+                    loan_amount,monthly_income,existing_debt_obligations):
 
     if customer_type == "NTB":
 
@@ -366,11 +366,11 @@ if st.sidebar.button("Evaluate Application"):
 
     expense_to_income = monthly_expenses / monthly_income
 
-    dti_1 = existing_debt / monthly_income
+    dti_1 = existing_debt_obligations / monthly_income
 
     new_debt = loan_amount * 0.05
 
-    dti_2 = (existing_debt + new_debt) / monthly_income
+    dti_2 = (existing_debt_obligations + new_debt) / monthly_income
     
     customer_type = detect_customer_type(national_id, internal_df)
 
@@ -443,7 +443,7 @@ if st.sidebar.button("Evaluate Application"):
     st.write("Risk probability:", risk)
 
     new_debt = loan_amount * 0.05
-    dti_2 = (existing_debt + new_debt) / monthly_income
+    dti_2 = (existing_debt_obligations + new_debt) / monthly_income
 
     screening = customer_screening(customer_type, is_blacklisted
 )
@@ -482,7 +482,7 @@ if st.sidebar.button("Evaluate Application"):
         dti_2,
         loan_amount,
         monthly_income,
-        existing_debt
+        existing_debt_obligations
 )
 
     
@@ -496,7 +496,7 @@ if st.sidebar.button("Evaluate Application"):
     cic_display = pd.DataFrame({
         "Credit Score":[credit_score],
         "Max DPD":[max_dpd],
-        "Existing Debt":[existing_debt]
+        "Existing Debt":[existing_debt_obligations]
 })
 
     st.dataframe(cic_display)
@@ -504,7 +504,7 @@ if st.sidebar.button("Evaluate Application"):
     st.subheader("Capacity Check")
     capacity_df = pd.DataFrame({
         "Monthly Income":[monthly_income],
-        "Existing Debt":[existing_debt],
+        "Existing Debt":[existing_debt_obligations],
         "DTI":[round(dti_1,2)],
         "ML Risk":[round(risk,2)]
 })
