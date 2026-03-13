@@ -50,13 +50,13 @@ st.caption("Hybrid Machine Learning + Rule Engine")
 # ---------------- LOAD DATA ---------------- #
 
 
-    credit_df = pd.read_csv("credit_data_processed.csv")
+credit_df = pd.read_csv("credit_data_processed.csv")
 
-    internal_df = pd.read_csv("Internal_mock_data_20k.csv")
-    internal_df["national_id"] = internal_df["national_id"].astype(str)
+internal_df = pd.read_csv("Internal_mock_data_20k.csv")
+internal_df["national_id"] = internal_df["national_id"].astype(str)
 
-    cic_df = pd.read_csv("CIC_mock_data_100k.csv")
-    cic_df["national_id"] = cic_df["national_id"].astype(str)
+cic_df = pd.read_csv("CIC_mock_data_100k.csv")
+cic_df["national_id"] = cic_df["national_id"].astype(str)
 
     # remove commas
     df = df.replace(",", "", regex=True)
