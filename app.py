@@ -48,25 +48,28 @@ st.title("AI Credit Risk Decision System")
 st.caption("Hybrid Machine Learning + Rule Engine")
 
 # ---------------- LOAD DATA ---------------- #
+
+credit_df = pd.read_csv("credit_data_processed.csv")
+
+internal_df = pd.read_csv("Internal_mock_data_20k.csv")
+internal_df["national_id"] = internal_df["national_id"].astype(str)
+
+cic_df = pd.read_csv("CIC_mock_data_100k.csv")
+cic_df["national_id"] = cic_df["national_id"].astype(str)
+
 @st.cache_resource
 def load_model():
 
-  df = pd.read_csv("credit_data_processed.csv")
+  df = credit_df.copy()
 
-  internal_df = pd.read_csv("Internal_mock_data_20k.csv")
-  internal_df["national_id"] = internal_df["national_id"].astype(str)
-
-  cic_df = pd.read_csv("CIC_mock_data_100k.csv")
-  cic_df["national_id"] = cic_df["national_id"].astype(str)
-
-    # remove commas
+  # remove commas
   df = df.replace(",", "", regex=True)
 
-    # convert everything numeric when possible
+  # convert everything numeric when possible
   for col in df.columns:
      df[col] = pd.to_numeric(df[col], errors="ignore")
 
-    # keep only numeric columns
+  # keep only numeric columns
   df = df.select_dtypes(include=["int64", "float64"])
 
   df = df.dropna()
