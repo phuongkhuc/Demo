@@ -387,7 +387,10 @@ if st.sidebar.button("Evaluate Application"):
         st.error(message)
         st.stop()
 
+    data = data[model.feature_names_in_]
     risk = model.predict_proba(data)[0][1]
+    st.write("Risk probability:", risk)
+    
     capacity_result, capacity_message = capacity_rules(
          monthly_income,
          dti_1,
