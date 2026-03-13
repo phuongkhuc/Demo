@@ -59,16 +59,16 @@ cic_df = pd.read_csv("CIC_mock_data_100k.csv")
 cic_df["national_id"] = cic_df["national_id"].astype(str)
 
     # remove commas
-    df = df.replace(",", "", regex=True)
+df = df.replace(",", "", regex=True)
 
     # convert everything numeric when possible
-    for col in df.columns:
-        df[col] = pd.to_numeric(df[col], errors="ignore")
+for col in df.columns:
+    df[col] = pd.to_numeric(df[col], errors="ignore")
 
     # keep only numeric columns
-    df = df.select_dtypes(include=["int64", "float64"])
+df = df.select_dtypes(include=["int64", "float64"])
 
-    df = df.dropna()
+df = df.dropna()
 
 # ---------------- TRAIN MODEL ---------------- #
     features = [
