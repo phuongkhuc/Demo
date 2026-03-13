@@ -183,6 +183,7 @@ is_blacklisted = st.sidebar.checkbox("Blacklisted")
 
 def calculate_age(dob):
 
+    dob = datetime.strptime(dob, "%Y-%m-%d")
     today = datetime.today()
 
     age = today.year - dob.year - (
@@ -194,7 +195,7 @@ def calculate_age(dob):
 def knockout_rules(age,nationality):
 
     if age < 18 or age > 65:
-        return "Approve"
+        return "Reject"
 
     if nationality != "Vietnam":
         return "Reject"
