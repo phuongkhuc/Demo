@@ -96,6 +96,7 @@ def load_model():
 
 st.sidebar.header("Customer Information")
 national_id = st.sidebar.text_input("National ID")
+customer_type = detect_customer_type(national_id, internal_df)
 
 dob = st.sidebar.date_input(
     "Date of Birth"
@@ -341,6 +342,8 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
         return "Reject",0
 
     # ---------- ETB ----------
+
+                        
     if customer_type == "ETB":
 
         if 0.7 <= risk <= 1 and dti_2 <= 0.5:
