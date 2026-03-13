@@ -179,7 +179,6 @@ max_dpd = st.sidebar.slider(
 )
 
 # ---------------- RULE ENGINE ---------------- #
-from datetime import datetime
 
 def calculate_age(dob):
 
