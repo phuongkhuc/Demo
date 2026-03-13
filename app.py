@@ -177,14 +177,12 @@ max_dpd = st.sidebar.slider(
     "Max DPD (Days Past Due)",
     0,120,0
 )
-is_blacklisted = st.sidebar.checkbox("Blacklisted")
 
 # ---------------- RULE ENGINE ---------------- #
 from datetime import datetime
 
 def calculate_age(dob):
 
-    dob = datetime.strptime(dob, "%Y-%m-%d")
     today = datetime.today()
 
     age = today.year - dob.year - (
@@ -196,34 +194,30 @@ def calculate_age(dob):
 def knockout_rules(age,nationality):
 
     if age < 18 or age > 65:
-        return "Reject"
+        return "Reject", "Age not eligible"
 
     if nationality != "Vietnam":
-        return "Reject"
+        return "Reject", "Nationality not supported"
 
-    return "Pass"                      
+    return "Pass", "Basic eligibility passed"                      
                        
-def detect_customer_type(national_id, internal_df):
+def detect_customer_type(national_id):
 
-    if str(national_id) in internal_df["national_id"].values:
-        return "ETB"
-    else:
-        return "NTB"
+    row = internal_df[internal_df["national_id"] == str(national_id)]
+
+    if row.empty:
+        return "NTB", None
+
+    return "ETB", row.iloc[0]
   
-def customer_screening(customer_type, is_blacklisted):
+def check_blacklist(customer_type, customer_row):
 
-    # ETB → check blacklist
     if customer_type == "ETB":
 
-        if is_blacklisted:
-            return "Reject"
+        if customer_row["ls_blacklisted"] == 1:
+            return "Reject", "Customer is blacklisted"
 
-        return "Pass"    
-    
-    # NTB → skip blacklist
-    if customer_type == "NTB":
-        return "Pass"
-    
+    return "Pass", "Blacklist check passed"
 
 def get_cic_data(national_id):
 
@@ -353,8 +347,6 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
 
 if st.sidebar.button("Evaluate Application"):
 
-    age = calculate_age(dob)  
-
     
     loan_percent_income = loan_amount / monthly_income
 
@@ -368,16 +360,58 @@ if st.sidebar.button("Evaluate Application"):
     
     customer_type = detect_customer_type(national_id, internal_df)
 
-    screening_result = customer_screening(customer_type, is_blacklisted)
 
-    if screening_result == "Reject":
+    # Knock-out rules, Decision matrix #
+    
+    data = data[model.feature_names_in_]
+    risk = model.predict_proba(data)[0][1]
+
+    age = calculate_age(dob)
+
+    # Age + nationality
+    rule_result, message = knockout_rules(age, nationality)
+
+    if rule_result == "Reject":
+        st.error(message)
+        st.stop()
+
+    # Detect ETB / NTB
+    customer_type, customer_row = detect_customer_type(national_id)
+
+    st.write("Customer Type:", customer_type)
+
+    # Blacklist check
+    rule_result, message = check_blacklist(customer_type, customer_row)
+
+    if rule_result == "Reject":
+        st.error(message)
+        st.stop()
+    
+    capacity_result, capacity_message = capacity_rules(
+         monthly_income,
+         dti_1,
+         risk
+)
+
+    if capacity_result == "Reject":
+
+        st.error(capacity_message)
 
         decision = "Reject"
         limit = 0
 
-        st.error("Rejected by internal blacklist rule")
-
         st.stop()
+    
+    decision, limit = decision_matrix(
+        customer_type,
+        risk,
+        credit_score,
+        dti_2,
+        loan_amount,
+        monthly_income,
+        existing_debt_obligations
+)
+
     # ---------------- CIC DATA ---------------- #
 
     cic_row = get_cic_data(national_id)
@@ -426,58 +460,6 @@ if st.sidebar.button("Evaluate Application"):
 
     })
 
-
-
-    # Knock-out rules, Decision matrix #
-    
-    data = data[model.feature_names_in_]
-    risk = model.predict_proba(data)[0][1]
-
-    
-    st.write("Risk probability:", risk)
-
-    new_debt = loan_amount * 0.05
-    dti_2 = (existing_debt_obligations + new_debt) / monthly_income
-
-    screening = customer_screening(customer_type, is_blacklisted
-)
-
-    if screening == "Reject":
-
-        decision = "Reject"
-        limit = 0
-
-    else:
-        rule_result = knockout_rules(
-            age,
-            nationality
-    )
-
-    
-    capacity_result, capacity_message = capacity_rules(
-         monthly_income,
-         dti_1,
-         risk
-)
-
-    if capacity_result == "Reject":
-
-        st.error(capacity_message)
-
-        decision = "Reject"
-        limit = 0
-
-        st.stop()
-    
-    decision, limit = decision_matrix(
-        customer_type,
-        risk,
-        credit_score,
-        dti_2,
-        loan_amount,
-        monthly_income,
-        existing_debt_obligations
-)
 
     
     st.markdown('<div class="card">', unsafe_allow_html=True)
