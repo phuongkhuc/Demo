@@ -1,51 +1,51 @@
- import streamlit as st
- import joblib
- import pandas as pd
- import plotly.graph_objects as go
- import plotly.express as px
+import streamlit as st
+import joblib
+import pandas as pd
+import plotly.graph_objects as go
+import plotly.express as px
 
- from sklearn.ensemble import RandomForestClassifier
- from datetime import datetime
+from sklearn.ensemble import RandomForestClassifier
+from datetime import datetime
 
- st.set_page_config(page_title="AI Credit Decision System", layout="wide")
+st.set_page_config(page_title="AI Credit Decision System", layout="wide")
 
- st.markdown("""
- <style>
+st.markdown("""
+<style>
 
- /* page padding */
- .block-container{
-     padding-top:2rem;
-     padding-bottom:2rem;
-     padding-left:3rem;
-     padding-right:3rem;
+/* page padding */
+.block-container{
+    padding-top:2rem;
+    padding-bottom:2rem;
+    padding-left:3rem;
+    padding-right:3rem;
 }
 
- /* card style */
- .card{
-     background-color:white;
-     padding:25px;
-     border-radius:12px;
-     box-shadow:0 2px 8px rgba(0,0,0,0.05);
-     margin-bottom:25px;
+/* card style */
+.card{
+    background-color:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom:25px;
 }
 
- /* section title */
- .section-title{
-     font-size:20px;
-     font-weight:600;
-     margin-bottom:10px;
+/* section title */
+.section-title{
+    font-size:20px;
+    font-weight:600;
+    margin-bottom:10px;
 }
 
- /* spacing */
- .section-space{
-     margin-top:40px;
+/* spacing */
+.section-space{
+    margin-top:40px;
 }
 
- </style>
- """, unsafe_allow_html=True)
+</style>
+""", unsafe_allow_html=True)
 
- st.title("AI Credit Risk Decision System")
- st.caption("Hybrid Machine Learning + Rule Engine")
+st.title("AI Credit Risk Decision System")
+st.caption("Hybrid Machine Learning + Rule Engine")
 
 # ---------------- LOAD DATA ---------------- #
 
