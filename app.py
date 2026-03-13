@@ -361,9 +361,7 @@ if st.sidebar.button("Evaluate Application"):
 
 
     # Knock-out rules, Decision matrix #
-    
-    data = data[model.feature_names_in_]
-    risk = model.predict_proba(data)[0][1]
+
 
     age = calculate_age(dob)
 
