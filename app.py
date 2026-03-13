@@ -247,7 +247,7 @@ def cic_rules(cic_row):
 
     max_dpd = cic_row["max_dpd"]
     credit_score = cic_row["credit_score"]
-    existing_debt = cic_row["existing_debt"]
+    existing_debt = cic_row["existing_debt_obligations"]
 
     # Rule 1: DPD
     if max_dpd > 30:
@@ -266,8 +266,8 @@ def capacity_rules(monthly_income, dti_1, risk):
         return "Reject", "Income below minimum requirement"
 
     # Rule 2: DTI
-    existing_debt = cic_row["existing_debt"]
-    dti_1 = existing_debt / monthly_income
+    existing_debt = cic_row["existing_debt_obligations"]
+    dti_1 = existing_debt_obligations / monthly_income
     
     if dti_1 >= 0.5:
         return "Reject", "Debt-to-income exceeds 50%"
@@ -299,7 +299,7 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
 
             if 431 <= credit_score < 570 and 0.36 < dti_2 <= 0.5:
 
-                limit = (0.36*monthly_income-existing_debt)/0.05
+                limit = (0.36*monthly_income-existing_debt_obligations)/0.05
                 limit = int(limit // 1000 * 1000)
                 return "Partial Approve", limit
 
@@ -308,7 +308,7 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
 
             if pd.isna(credit_score) and 0.36 < dti_2 <= 0.5:
 
-                limit = (0.36 * monthly_income - existing_debt)/0.05
+                limit = (0.36 * monthly_income - existing_debt_obligations)/0.05
                 limit = int(limit // 1000 * 1000)
                 return "Partial Approve", limit
 
@@ -366,11 +366,11 @@ if st.sidebar.button("Evaluate Application"):
 
     expense_to_income = monthly_expenses / monthly_income
 
-    dti_1 = existing_debt / monthly_income
+    dti_1 = existing_debt_obligations / monthly_income
 
     new_debt = loan_amount * 0.05
 
-    dti_2 = (existing_debt + new_debt) / monthly_income
+    dti_2 = (existing_debt_obligations + new_debt) / monthly_income
     
     customer_type = detect_customer_type(national_id, internal_df)
 
@@ -438,12 +438,12 @@ if st.sidebar.button("Evaluate Application"):
     
     data = data[model.feature_names_in_]
     risk = model.predict_proba(data)[0][1]
-    existing_debt = cic_row["existing_debt"]
+    existing_debt = cic_row["existing_debt_obligations"]
     
     st.write("Risk probability:", risk)
 
     new_debt = loan_amount * 0.05
-    dti_2 = (existing_debt + new_debt) / monthly_income
+    dti_2 = (existing_debt_obligations + new_debt) / monthly_income
 
     screening = customer_screening(customer_type, is_blacklisted
 )
