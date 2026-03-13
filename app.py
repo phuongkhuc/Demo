@@ -374,7 +374,6 @@ if st.sidebar.button("Evaluate Application"):
             {"debt consolidation":0,"education":1,"home improvement":2,"medical":3,"personal":4,"venture":5}[loan_intent]
         ],
         "interest_rate":[interest_rate],
-        "loan_percent_income":[loan_percent_income],
         "credit_score":[credit_score],
         "expense_to_income":[expense_to_income]
 
