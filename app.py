@@ -349,7 +349,8 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
 # ---------------- EVALUTE ---------------- #
 
 if st.sidebar.button("Evaluate Application"):
-
+    
+    age = calculate_age(dob)
     data = pd.DataFrame({
 
         "age":[age],
@@ -389,7 +390,6 @@ if st.sidebar.button("Evaluate Application"):
 
     dti_2 = (existing_debt_obligations + new_debt) / monthly_income
     
-
 
     # Knock-out rules, Decision matrix #
 
