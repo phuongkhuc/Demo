@@ -1,77 +1,77 @@
-import streamlit as st
-import joblib
-import pandas as pd
-import plotly.graph_objects as go
-import plotly.express as px
+ import streamlit as st
+ import joblib
+ import pandas as pd
+ import plotly.graph_objects as go
+ import plotly.express as px
 
-from sklearn.ensemble import RandomForestClassifier
-from datetime import datetime
+ from sklearn.ensemble import RandomForestClassifier
+ from datetime import datetime
 
-st.set_page_config(page_title="AI Credit Decision System", layout="wide")
+ st.set_page_config(page_title="AI Credit Decision System", layout="wide")
 
-st.markdown("""
-<style>
+ st.markdown("""
+ <style>
 
-/* page padding */
-.block-container{
-    padding-top:2rem;
-    padding-bottom:2rem;
-    padding-left:3rem;
-    padding-right:3rem;
+ /* page padding */
+ .block-container{
+     padding-top:2rem;
+     padding-bottom:2rem;
+     padding-left:3rem;
+     padding-right:3rem;
 }
 
-/* card style */
-.card{
-    background-color:white;
-    padding:25px;
-    border-radius:12px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.05);
-    margin-bottom:25px;
+ /* card style */
+ .card{
+     background-color:white;
+     padding:25px;
+     border-radius:12px;
+     box-shadow:0 2px 8px rgba(0,0,0,0.05);
+     margin-bottom:25px;
 }
 
-/* section title */
-.section-title{
-    font-size:20px;
-    font-weight:600;
-    margin-bottom:10px;
+ /* section title */
+ .section-title{
+     font-size:20px;
+     font-weight:600;
+     margin-bottom:10px;
 }
 
-/* spacing */
-.section-space{
-    margin-top:40px;
+ /* spacing */
+ .section-space{
+     margin-top:40px;
 }
 
-</style>
-""", unsafe_allow_html=True)
+ </style>
+ """, unsafe_allow_html=True)
 
-st.title("AI Credit Risk Decision System")
-st.caption("Hybrid Machine Learning + Rule Engine")
+ st.title("AI Credit Risk Decision System")
+ st.caption("Hybrid Machine Learning + Rule Engine")
 
 # ---------------- LOAD DATA ---------------- #
 
 
-credit_df = pd.read_csv("credit_data_processed.csv")
+ credit_df = pd.read_csv("credit_data_processed.csv")
 
-internal_df = pd.read_csv("Internal_mock_data_20k.csv")
-internal_df["national_id"] = internal_df["national_id"].astype(str)
+ internal_df = pd.read_csv("Internal_mock_data_20k.csv")
+ internal_df["national_id"] = internal_df["national_id"].astype(str)
 
-cic_df = pd.read_csv("CIC_mock_data_100k.csv")
-cic_df["national_id"] = cic_df["national_id"].astype(str)
+ cic_df = pd.read_csv("CIC_mock_data_100k.csv")
+ cic_df["national_id"] = cic_df["national_id"].astype(str)
 
     # remove commas
-df = df.replace(",", "", regex=True)
+ df = df.replace(",", "", regex=True)
 
     # convert everything numeric when possible
-for col in df.columns:
+ for col in df.columns:
     df[col] = pd.to_numeric(df[col], errors="ignore")
 
     # keep only numeric columns
-df = df.select_dtypes(include=["int64", "float64"])
+ df = df.select_dtypes(include=["int64", "float64"])
 
-df = df.dropna()
+ df = df.dropna()
 
 # ---------------- TRAIN MODEL ---------------- #
-features = [
+ features = [
         "age",
         "monthly_income",
         "loan_amount",
@@ -79,16 +79,16 @@ features = [
         "employment_years",
         "credit_history_years"
     ]
-credit_df = credit_df.dropna()
+ credit_df = credit_df.dropna()
    
-X = df[features]
-y = df["loan_status"]
+ X = df[features]
+ y = df["loan_status"]
 
-model = RandomForestClassifier(n_estimators=100,random_state=42)
+ model = RandomForestClassifier(n_estimators=100,random_state=42)
 
-model.fit(X, y)
+ model.fit(X, y)
 
-return model
+ return model
 
 model = load_model()
 
