@@ -386,7 +386,8 @@ if st.sidebar.button("Evaluate Application"):
     if rule_result == "Reject":
         st.error(message)
         st.stop()
-    
+
+    risk = model.predict_proba(data)[0][1]
     capacity_result, capacity_message = capacity_rules(
          monthly_income,
          dti_1,
