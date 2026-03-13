@@ -180,6 +180,7 @@ max_dpd = st.sidebar.slider(
 is_blacklisted = st.sidebar.checkbox("Blacklisted")
 
 # ---------------- RULE ENGINE ---------------- #
+from datetime import datetime
 
 def calculate_age(dob):
 
