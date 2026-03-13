@@ -378,9 +378,6 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
         "expense_to_income":[expense_to_income]
 
     })
-    data = data[model.feature_names_in_]
-    risk = model.predict_proba(data)[0][1]
-    st.write("Risk probability:", risk)
 
 if st.sidebar.button("Evaluate Application"):
     
@@ -420,6 +417,10 @@ if st.sidebar.button("Evaluate Application"):
         st.error(message)
         st.stop()
 
+    
+    data = data[model.feature_names_in_]
+    risk = model.predict_proba(data)[0][1]
+    st.write("Risk probability:", risk)
     
     capacity_result, capacity_message = capacity_rules(
          monthly_income,
