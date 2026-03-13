@@ -266,7 +266,7 @@ def capacity_rules(monthly_income, dti_1, risk):
         return "Reject", "Income below minimum requirement"
 
     # Rule 2: DTI
-    existing_debt_obligations = cic_row["existing_debt_obligations"]
+
     dti_1 = existing_debt_obligations / monthly_income
     
     if dti_1 >= 0.5:
