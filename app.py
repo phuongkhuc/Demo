@@ -71,7 +71,7 @@ df = df.select_dtypes(include=["int64", "float64"])
 df = df.dropna()
 
 # ---------------- TRAIN MODEL ---------------- #
-    features = [
+features = [
         "age",
         "monthly_income",
         "loan_amount",
@@ -79,16 +79,16 @@ df = df.dropna()
         "employment_years",
         "credit_history_years"
     ]
-    credit_df = credit_df.dropna()
+credit_df = credit_df.dropna()
    
-    X = df[features]
-    y = df["loan_status"]
+X = df[features]
+y = df["loan_status"]
 
-    model = RandomForestClassifier(n_estimators=100,random_state=42)
+model = RandomForestClassifier(n_estimators=100,random_state=42)
 
-    model.fit(X, y)
+model.fit(X, y)
 
-    return model
+return model
 
 model = load_model()
 
