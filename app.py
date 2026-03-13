@@ -217,7 +217,7 @@ def check_blacklist(customer_type, customer_row):
 
     if customer_type == "ETB":
 
-        if customer_row["ls_blacklisted"] == 1:
+        if customer_row["is_blacklisted"] == 1:
             return "Reject", "Customer is blacklisted"
 
     return "Pass", "Blacklist check passed"
@@ -380,8 +380,8 @@ if st.sidebar.button("Evaluate Application"):
 
     st.write("Customer Type:", customer_type)
 
-    # Blacklist check
-    rule_result, message = check_blacklist(customer_type, customer_row)
+    #  check
+    rule_result, message = check_(customer_type, customer_row)
 
     if rule_result == "Reject":
         st.error(message)
