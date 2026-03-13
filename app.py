@@ -348,8 +348,8 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
 
 # ---------------- EVALUTE ---------------- #
 
-  # ----- ML prediction -----
-    
+if st.sidebar.button("Evaluate Application"):
+
     data = pd.DataFrame({
 
         "age":[age],
@@ -378,8 +378,6 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
         "expense_to_income":[expense_to_income]
 
     })
-
-if st.sidebar.button("Evaluate Application"):
     
     loan_percent_income = loan_amount / monthly_income
 
