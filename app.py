@@ -373,7 +373,8 @@ if st.sidebar.button("Evaluate Application"):
     new_debt = loan_amount * 0.05
 
     dti_2 = (existing_debt + new_debt) / monthly_income
-
+    
+    customer_type = detect_customer_type(national_id, internal_df)
 
     screening_result = customer_screening(customer_type, is_blacklisted)
 
