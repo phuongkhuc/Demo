@@ -348,10 +348,41 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
 
 # ---------------- EVALUTE ---------------- #
 
-if st.sidebar.button("Evaluate Application"):
+  # ----- ML prediction -----
+    
+    data = pd.DataFrame({
+
+        "age":[age],
+        "gender":[1 if gender=="Male" else 0],
+        "employment_years":[employment_years],
+        "employment_status":[
+            {"full time":0,"part time":1,"self employed":2,"unemployed":3}[employment_status]
+        ],
+        "monthly_income":[monthly_income],
+        "monthly_expenses":[monthly_expenses],
+        "credit_history_years":[credit_history_years],
+        "past_default":[1 if past_default=="Yes" else 0],
+        "residence_type":[
+            {"mortgage":0,"other":1,"own":2,"rent":3}[residence_type]
+        ],
+        "loan_amount":[loan_amount],
+        "education":[
+            {"associate":0,"bachelor":1,"doctorate":2,"high school":3,"master":4}[education]
+        ],
+        "loan_intent":[
+            {"debt consolidation":0,"education":1,"home improvement":2,"medical":3,"personal":4,"venture":5}[loan_intent]
+        ],
+        "interest_rate":[interest_rate],
+        "loan_percent_income":[loan_percent_income],
+        "credit_score":[credit_score],
+        "expense_to_income":[expense_to_income]
+
+    })
     data = data[model.feature_names_in_]
     risk = model.predict_proba(data)[0][1]
     st.write("Risk probability:", risk)
+
+if st.sidebar.button("Evaluate Application"):
     
     loan_percent_income = loan_amount / monthly_income
 
@@ -432,37 +463,6 @@ if st.sidebar.button("Evaluate Application"):
 
         st.stop()
     
-  # ----- ML prediction -----
-    
-    data = pd.DataFrame({
-
-        "age":[age],
-        "gender":[1 if gender=="Male" else 0],
-        "employment_years":[employment_years],
-        "employment_status":[
-            {"full time":0,"part time":1,"self employed":2,"unemployed":3}[employment_status]
-        ],
-        "monthly_income":[monthly_income],
-        "monthly_expenses":[monthly_expenses],
-        "credit_history_years":[credit_history_years],
-        "past_default":[1 if past_default=="Yes" else 0],
-        "residence_type":[
-            {"mortgage":0,"other":1,"own":2,"rent":3}[residence_type]
-        ],
-        "loan_amount":[loan_amount],
-        "education":[
-            {"associate":0,"bachelor":1,"doctorate":2,"high school":3,"master":4}[education]
-        ],
-        "loan_intent":[
-            {"debt consolidation":0,"education":1,"home improvement":2,"medical":3,"personal":4,"venture":5}[loan_intent]
-        ],
-        "interest_rate":[interest_rate],
-        "loan_percent_income":[loan_percent_income],
-        "credit_score":[credit_score],
-        "expense_to_income":[expense_to_income]
-
-    })
-
 
     
     st.markdown('<div class="card">', unsafe_allow_html=True)
