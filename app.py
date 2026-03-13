@@ -52,11 +52,12 @@ st.caption("Hybrid Machine Learning + Rule Engine")
 @st.cache_resource
 def load_model():
 
-    df = pd.read_csv("credit_data_processed.csv")
-    internal_df = pd.read_csv("Internal_mock_data_20k.csv")
-    cic_df = pd.read_csv("CIC_mock_data_100k.csv")
+    credit_df = pd.read_csv("credit_data_processed.csv")
 
+    internal_df = pd.read_csv("Internal_mock_data_20k.csv")
     internal_df["national_id"] = internal_df["national_id"].astype(str)
+
+    cic_df = pd.read_csv("CIC_mock_data_100k.csv")
     cic_df["national_id"] = cic_df["national_id"].astype(str)
 
     # remove commas
@@ -91,6 +92,7 @@ def load_model():
 
     return model
 
+model = load_model()
 
 # ---------------- SIDEBAR ---------------- #
 
@@ -187,6 +189,7 @@ max_dpd = st.sidebar.slider(
     "Max DPD (Days Past Due)",
     0,120,0
 )
+is_blacklisted = st.sidebar.checkbox("Blacklisted")
 
 # ---------------- RULE ENGINE ---------------- #
 
@@ -248,7 +251,7 @@ def cic_rules(cic_row):
 
     max_dpd = cic_row["max_dpd"]
     credit_score = cic_row["credit_score"]
-    existing_debt = cic_row["existing_debt_obligations"]
+    existing_debt = cic_row["existing_debt"]
 
     # Rule 1: DPD
     if max_dpd > 30:
@@ -341,7 +344,6 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
         return "Reject",0
 
     # ---------- ETB ----------
-    customer_type = detect_customer_type(national_id, internal_df)
                         
     if customer_type == "ETB":
 
@@ -447,11 +449,7 @@ if st.sidebar.button("Evaluate Application"):
     new_debt = loan_amount * 0.05
     dti_2 = (existing_debt + new_debt) / monthly_income
 
-    screening = customer_screening(
-        customer_type,
-        is_blacklisted,
-        is_fraud,
-        max_dpd
+    screening = customer_screening(customer_type, is_blacklisted
 )
 
     if screening == "Reject":
@@ -462,14 +460,7 @@ if st.sidebar.button("Evaluate Application"):
     else:
         rule_result = knockout_rules(
             age,
-            nationality,
-            is_blacklisted,
-            is_fraud,
-            max_dpd,
-            credit_score,
-            monthly_income,
-            dti_1,
-            risk
+            nationality
     )
 
     
