@@ -65,12 +65,6 @@ def load_model():
   # remove commas
   df = df.replace(",", "", regex=True)
 
-  # convert everything numeric when possible
-  for col in df.columns:
-     df[col] = pd.to_numeric(df[col], errors="ignore")
-
-  # keep only numeric columns
-  df = df.select_dtypes(include=["int64", "float64"])
 
   df = df.dropna()
 
