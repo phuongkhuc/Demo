@@ -438,7 +438,7 @@ if st.sidebar.button("Evaluate Application"):
     
     data = data[model.feature_names_in_]
     risk = model.predict_proba(data)[0][1]
-    existing_debt = cic_row["existing_debt_obligations"]
+    existing_debt = cic_row["existing_debt"]
     
     st.write("Risk probability:", risk)
 
