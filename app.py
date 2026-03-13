@@ -194,7 +194,7 @@ def calculate_age(dob):
 def knockout_rules(age,nationality):
 
     if age < 18 or age > 65:
-        return "Reject"
+        return "Approve"
 
     if nationality != "Vietnam":
         return "Reject"
