@@ -51,7 +51,7 @@ st.caption("Hybrid Machine Learning + Rule Engine")
 @st.cache_resource
 def load_model():
 
-  credit_df = pd.read_csv("credit_data_processed.csv")
+  df = pd.read_csv("credit_data_processed.csv")
 
   internal_df = pd.read_csv("Internal_mock_data_20k.csv")
   internal_df["national_id"] = internal_df["national_id"].astype(str)
@@ -80,7 +80,7 @@ def load_model():
         "employment_years",
         "credit_history_years"
     ]
-  credit_df = credit_df.dropna()
+  df = df.dropna()
    
   X = df[features]
   y = df["loan_status"]
