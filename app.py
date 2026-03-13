@@ -443,7 +443,7 @@ if st.sidebar.button("Evaluate Application"):
     st.write("Risk probability:", risk)
 
     new_debt = loan_amount * 0.05
-    dti_2 = (existing_debt_obligations + new_debt) / monthly_income
+    dti_2 = (existing_debt + new_debt) / monthly_income
 
     screening = customer_screening(customer_type, is_blacklisted
 )
