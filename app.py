@@ -49,8 +49,6 @@ st.caption("Hybrid Machine Learning + Rule Engine")
 
 # ---------------- LOAD DATA ---------------- #
 
-@st.cache_resource
-def load_model():
 
     credit_df = pd.read_csv("credit_data_processed.csv")
 
