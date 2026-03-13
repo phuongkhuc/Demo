@@ -48,30 +48,31 @@ st.title("AI Credit Risk Decision System")
 st.caption("Hybrid Machine Learning + Rule Engine")
 
 # ---------------- LOAD DATA ---------------- #
+@st.cache_resource
+def load_model():
 
+  credit_df = pd.read_csv("credit_data_processed.csv")
 
- credit_df = pd.read_csv("credit_data_processed.csv")
+  internal_df = pd.read_csv("Internal_mock_data_20k.csv")
+  internal_df["national_id"] = internal_df["national_id"].astype(str)
 
- internal_df = pd.read_csv("Internal_mock_data_20k.csv")
- internal_df["national_id"] = internal_df["national_id"].astype(str)
-
- cic_df = pd.read_csv("CIC_mock_data_100k.csv")
- cic_df["national_id"] = cic_df["national_id"].astype(str)
+  cic_df = pd.read_csv("CIC_mock_data_100k.csv")
+  cic_df["national_id"] = cic_df["national_id"].astype(str)
 
     # remove commas
- df = df.replace(",", "", regex=True)
+  df = df.replace(",", "", regex=True)
 
     # convert everything numeric when possible
- for col in df.columns:
-    df[col] = pd.to_numeric(df[col], errors="ignore")
+  for col in df.columns:
+     df[col] = pd.to_numeric(df[col], errors="ignore")
 
     # keep only numeric columns
- df = df.select_dtypes(include=["int64", "float64"])
+  df = df.select_dtypes(include=["int64", "float64"])
 
- df = df.dropna()
+  df = df.dropna()
 
 # ---------------- TRAIN MODEL ---------------- #
- features = [
+  features = [
         "age",
         "monthly_income",
         "loan_amount",
@@ -79,16 +80,16 @@ st.caption("Hybrid Machine Learning + Rule Engine")
         "employment_years",
         "credit_history_years"
     ]
- credit_df = credit_df.dropna()
+  credit_df = credit_df.dropna()
    
- X = df[features]
- y = df["loan_status"]
+  X = df[features]
+  y = df["loan_status"]
 
- model = RandomForestClassifier(n_estimators=100,random_state=42)
+  model = RandomForestClassifier(n_estimators=100,random_state=42)
 
- model.fit(X, y)
+  model.fit(X, y)
 
- return model
+  return model
 
 model = load_model()
 
