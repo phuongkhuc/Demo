@@ -471,53 +471,47 @@ if st.sidebar.button("Evaluate Application"):
 
 # ---------------- OUTPUT ---------------- #
 
-    st.markdown("""
-    <style>
+   st.markdown("""
+   <style>
 
-    /* nền toàn trang */
-    .stApp{
-        background-color:#f3f6fb;
+   .stApp{
+      background-color:#f4f7fb;
 }
 
-    /* container */
-    .block-container{
-        padding-top:2rem;
-        padding-bottom:2rem;
-        padding-left:3rem;
-        padding-right:3rem;
+   .block-container{
+      padding-top:2rem;
+      padding-bottom:2rem;
+      padding-left:3rem;
+      padding-right:3rem;
 }
 
-   /* card  dashboard */
+   /* card */
    .card{
-        background:white;
-        padding:25px;
-        border-radius:14px;
-        box-shadow:0 4px 14px rgba(0,0,0,0.08);
-        margin-bottom:25px;
+      background:white;
+      padding:22px;
+      border-radius:12px;
+      box-shadow:0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom:22px;
+}
+
+   /* KPI card */
+   .kpi{
+      background:white;
+      padding:20px;
+      border-radius:10px;
+      box-shadow:0 3px 10px rgba(0,0,0,0.06);
+      text-align:center;
 }
 
    /* section title */
    .section-title{
-       font-size:22px;
-       font-weight:600;
-       margin-bottom:10px;
+      font-size:22px;
+      font-weight:600;
+      margin-bottom:12px;
 }
 
-  /* spacing */
-  .section-space{
-       margin-top:30px;
-}
-
-  /* metric cards */
-  .metric-card{
-       background:white;
-       padding:18px;
-       border-radius:12px;
-       box-shadow:0 2px 8px rgba(0,0,0,0.06);
-}
-
-  </style>
-  """, unsafe_allow_html=True)
+   </style>
+   """, unsafe_allow_html=True)
 
 
     
@@ -534,7 +528,7 @@ if st.sidebar.button("Evaluate Application"):
        "Credit Score":[credit_score]
 })
 
-    st.dataframe(summary_df)
+    st.dataframe(summary_df, use_container_width=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -548,10 +542,11 @@ if st.sidebar.button("Evaluate Application"):
     col1,col2,col3 = st.columns(3)
 
     with col1:
+         st.markdown('<div class="kpi">', unsafe_allow_html=True)
          st.metric(
              "Approval Probability",
              f"{risk*100:.2f}%",
-             help="Probability that the customer is a good borrower predicted by the ML model"
+             help="Probability that the cu3er is a good borrower predicted by the ML model"
     )
 
     with col2:
@@ -562,45 +557,50 @@ if st.sidebar.button("Evaluate Application"):
              level = "🟡 Medium Risk"
         else:
              level = "🟢 Low Default Risk"
-
-        st.metric("Risk Level", level)
+        
+        st.markdown('<div class="kpi">', unsafe_allow_html=True)
+        st.metric("Risk Level",level)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     with col3:
-        st.metric("Rule Engine", rule_result)
-
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('<div class="kpi">', unsafe_allow_html=True)
+        st.metric("Rule Engine",rule_result)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     
     #Financial Capacity Card
-    
-    st.markdown('<div class="card section-space">', unsafe_allow_html=True)
+    col1,col2, col3 = st.columns(2)
+    with col1:
+        
+         st.markdown('<div class="card">', unsafe_allow_html=True)
 
-    st.subheader("💰 Financial Capacity")
+         st.subheader("💰 Financial Capacity")
 
-    capacity_df = pd.DataFrame({
-        "Monthly Income":[monthly_income],
-        "Existing Debt":[existing_debt_obligations],
-        "DTI":[round(dti_2,2)],
-        "Loan Amount":[loan_amount]
+         capacity_df = pd.DataFrame({
+             "Monthly Income":[monthly_income],
+             "Existing Debt":[existing_debt_obligations],
+             "DTI":[round(dti_2,2)],
+             "Loan Amount":[loan_amount]
 })
 
-    st.dataframe(capacity_df)
-
-    st.markdown('</div>', unsafe_allow_html=True)
+         st.dataframe(capacity_df, use_container_width=True)
+         st.markdown('</div>', unsafe_allow_html=True)
 
    
    #CIC Data Card
-    st.markdown('<div class="card section-space">', unsafe_allow_html=True)
-    st.subheader("📊 CIC Data")
+    with col2:
+        
+         st.markdown('<div class="card">', unsafe_allow_html=True)
+         st.subheader("🏦 CIC Bureau")
 
-    cic_display = pd.DataFrame({
-        "Credit Score":[credit_score],
-        "Max DPD":[max_dpd],
-        "Existing Debt":[existing_debt_obligations]
+         cic_display = pd.DataFrame({
+            "Credit Score":[credit_score],
+            "Max DPD":[max_dpd],
+            "Existing Debt":[existing_debt_obligations]
 })
 
-    st.dataframe(cic_display)
-
+         st.dataframe(cic_display, use_container_width=True)
+    
     st.subheader("📊 Capacity Check")
     capacity_df = pd.DataFrame({
         "Monthly Income":[monthly_income],
