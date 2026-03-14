@@ -351,6 +351,7 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
 if monthly_income == 0:
     st.error("Monthly income cannot be zero")
     st.stop()
+    
 if st.sidebar.button("Evaluate Application"):
 
     loan_percent_income = loan_amount / monthly_income
