@@ -654,7 +654,7 @@ if st.sidebar.button("Evaluate Application"):
 
     st.subheader("📈 Risk Visualization")
 
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True, key="risk_visualization")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
