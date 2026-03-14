@@ -75,7 +75,8 @@ def load_model():
         "loan_amount",
         "credit_score",
         "employment_years",
-        "credit_history_years"
+        "credit_history_years",
+        "loan_percent_income"
     ]
   df = df.dropna()
    
@@ -349,7 +350,16 @@ def decision_matrix(customer_type,risk,credit_score,dti_2,
 # ---------------- EVALUTE ---------------- #
 
 if st.sidebar.button("Evaluate Application"):
-    
+    loan_percent_income = loan_amount / monthly_income
+
+    expense_to_income = monthly_expenses / monthly_income
+
+    dti_1 = existing_debt_obligations / monthly_income
+
+    new_debt = loan_amount * 0.05
+
+    dti_2 = (existing_debt_obligations + new_debt) / monthly_income
+
     age = calculate_age(dob)
     data = pd.DataFrame({
 
@@ -374,19 +384,12 @@ if st.sidebar.button("Evaluate Application"):
             {"debt consolidation":0,"education":1,"home improvement":2,"medical":3,"personal":4,"venture":5}[loan_intent]
         ],
         "interest_rate":[interest_rate],
-        "credit_score":[credit_score]
+        "credit_score":[credit_score],
+        "loan_percent_income":[loan_percent_income]
 
     })
     
-    loan_percent_income = loan_amount / monthly_income
 
-    expense_to_income = monthly_expenses / monthly_income
-
-    dti_1 = existing_debt_obligations / monthly_income
-
-    new_debt = loan_amount * 0.05
-
-    dti_2 = (existing_debt_obligations + new_debt) / monthly_income
     
 
     # Knock-out rules, Decision matrix #
