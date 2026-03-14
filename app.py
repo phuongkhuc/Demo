@@ -501,27 +501,25 @@ if st.sidebar.button("Evaluate Application"):
     col1,col2,col3 = st.columns(3)
 
     with col1:
-        st.metric("Default Probability",f"{risk*100:.2f}%",
-                  help="Probability of customer default predicted by ML model"
-        )
+        st.metric(
+            "Approval Probability",
+            f"{risk*100:.2f}%",
+            help="Probability that the customer is a good borrower predicted by the ML model"
+    )
 
     with col2:
 
         if risk < 0.4:
-            level = "LOW RISK"
-            color = "🟢"
+            level = "🔴 High Default Risk"
         elif risk < 0.7:
-            level = "MEDIUM RISK"
-            color = "🟡"
+            level = "🟡 Medium Risk"
         else:
-            level = "HIGH RISK"
-            color = "🔴"
+            level = "🟢 Low Default Risk"
 
-        st.metric("Risk Level",f"{color} {level}")
+        st.metric("Risk Level", level)
 
     with col3:
-        st.metric("Rule Engine",rule_result)
-
+        st.metric("Rule Engine Status", rule_result)
     st.markdown('</div>', unsafe_allow_html=True)
     
 #------
