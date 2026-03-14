@@ -602,7 +602,7 @@ if st.sidebar.button("Evaluate Application"):
          st.dataframe(cic_display, use_container_width=True)
     
     with col3:
-    
+        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("📊 Capacity Check")
         capacity_df = pd.DataFrame({
             "Monthly Income":[monthly_income],
