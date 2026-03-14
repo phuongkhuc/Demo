@@ -546,7 +546,7 @@ if st.sidebar.button("Evaluate Application"):
          st.metric(
              "Approval Probability",
              f"{risk*100:.2f}%",
-             help="Probability that the cu3er is a good borrower predicted by the ML model"
+             help="Probability that the customer is a good borrower predicted by the ML model"
     )
 
     with col2:
@@ -569,7 +569,7 @@ if st.sidebar.button("Evaluate Application"):
 
     
     #Financial Capacity Card
-    col1,col2, col3 = st.columns(2)
+    col1,col2,col3 = st.columns(3)
     with col1:
         
          st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -601,21 +601,23 @@ if st.sidebar.button("Evaluate Application"):
 
          st.dataframe(cic_display, use_container_width=True)
     
-    st.subheader("📊 Capacity Check")
-    capacity_df = pd.DataFrame({
-        "Monthly Income":[monthly_income],
-        "Existing Debt":[existing_debt_obligations],
-        "DTI":[round(dti_1,2)],
-        "ML Risk":[round(risk,2)]
+    with col3:
+    
+        st.subheader("📊 Capacity Check")
+        capacity_df = pd.DataFrame({
+            "Monthly Income":[monthly_income],
+            "Existing Debt":[existing_debt_obligations],
+            "DTI":[round(dti_1,2)],
+            "ML Risk":[round(risk,2)]
 })
 
-    st.dataframe(capacity_df)
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.dataframe(capacity_df)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     
     #Final Decision Card
     
-    st.markdown('<div class="card section-space">', unsafe_allow_html=True) 
+    st.markdown('<div class="card">', unsafe_allow_html=True) 
     st.subheader("⚖️ Final Decision")
     st.write("Customer Type:", customer_type)
 
