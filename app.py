@@ -470,6 +470,57 @@ if st.sidebar.button("Evaluate Application"):
  
 
 # ---------------- OUTPUT ---------------- #
+
+    st.markdown("""
+    <style>
+
+    /* nền toàn trang */
+    .stApp{
+        background-color:#f3f6fb;
+}
+
+    /* container */
+    .block-container{
+        padding-top:2rem;
+        padding-bottom:2rem;
+        padding-left:3rem;
+        padding-right:3rem;
+}
+
+   /* card  dashboard */
+   .card{
+        background:white;
+        padding:25px;
+        border-radius:14px;
+        box-shadow:0 4px 14px rgba(0,0,0,0.08);
+        margin-bottom:25px;
+}
+
+   /* section title */
+   .section-title{
+       font-size:22px;
+       font-weight:600;
+       margin-bottom:10px;
+}
+
+  /* spacing */
+  .section-space{
+       margin-top:30px;
+}
+
+  /* metric cards */
+  .metric-card{
+       background:white;
+       padding:18px;
+       border-radius:12px;
+       box-shadow:0 2px 8px rgba(0,0,0,0.06);
+}
+
+  </style>
+  """, unsafe_allow_html=True)
+
+
+    
     #Customer Summary Card
     
     st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -597,6 +648,15 @@ if st.sidebar.button("Evaluate Application"):
     st.metric("AI Confidence Zone", confidence)
         
     st.markdown('</div>', unsafe_allow_html=True)
+
+  #Chart
+   st.markdown('<div class="card section-space">', unsafe_allow_html=True)
+
+   st.subheader("📈 Risk Visualization")
+
+   st.plotly_chart(fig)
+
+   st.markdown('</div>', unsafe_allow_html=True)
 
 
 
