@@ -392,7 +392,6 @@ if st.sidebar.button("Evaluate Application"):
 
     })
     
-
     
 
     # Knock-out rules, Decision matrix #
@@ -475,39 +474,27 @@ if st.sidebar.button("Evaluate Application"):
     <style>
 
     .stApp{
-       background-color:#f4f7fb;
+       background:#f5f7fb;
 }
 
-    .block-container{
-       padding-top:2rem;
-       padding-bottom:2rem;
-       padding-left:3rem;
-       padding-right:3rem;
-}
-
-    /* card */
+    /* dashboard card */
     .card{
        background:white;
-       padding:22px;
        border-radius:12px;
-       box-shadow:0 4px 12px rgba(0,0,0,0.08);
-       margin-bottom:22px;
+       padding:25px;
+       margin-top:15px;
+       margin-bottom:20px;
+       border:1px solid #e6e8ef;
+       box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
 
     /* KPI card */
     .kpi{
        background:white;
-       padding:20px;
        border-radius:10px;
-       box-shadow:0 3px 10px rgba(0,0,0,0.06);
-       text-align:center;
-}
-
-    /* section title */
-    .section-title{
-       font-size:22px;
-       font-weight:600;
-       margin-bottom:12px;
+       padding:18px;
+       border:1px solid #e6e8ef;
+       box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
 
     </style>
@@ -516,21 +503,22 @@ if st.sidebar.button("Evaluate Application"):
 
     
     #Customer Summary Card
+    with st.container():
     
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.markdown('<div class="card">', unsafe_allow_html=True)
 
-    st.subheader("👤 Customer Summary")
+        st.subheader("👤 Customer Summary")
 
-    summary_df = pd.DataFrame({
-       "Customer Type":[customer_type],
-       "Income":[monthly_income],
-       "Loan Amount":[loan_amount],
-       "Credit Score":[credit_score]
+        summary_df = pd.DataFrame({
+           "Customer Type":[customer_type],
+           "Income":[monthly_income],
+           "Loan Amount":[loan_amount],
+           "Credit Score":[credit_score]
 })
 
-    st.dataframe(summary_df, use_container_width=True)
+        st.dataframe(summary_df, use_container_width=True)
 
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
    
     #AI Risk Assessment Card
@@ -542,6 +530,7 @@ if st.sidebar.button("Evaluate Application"):
     col1,col2,col3 = st.columns(3)
 
     with col1:
+       with st.container():
          st.markdown('<div class="kpi">', unsafe_allow_html=True)
          st.metric(
              "Approval Probability",
@@ -550,19 +539,20 @@ if st.sidebar.button("Evaluate Application"):
     )
 
     with col2:
-
         if risk < 0.5:
              level = "🔴 High Default Risk"
         elif risk < 0.7:
              level = "🟡 Medium Risk"
         else:
              level = "🟢 Low Default Risk"
-        
+            
+      with st.container():   
         st.markdown('<div class="kpi">', unsafe_allow_html=True)
         st.metric("Risk Level",level)
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col3:
+      with st.container():  
         st.markdown('<div class="kpi">', unsafe_allow_html=True)
         st.metric("Rule Engine",rule_result)
         st.markdown('</div>', unsafe_allow_html=True)
@@ -571,7 +561,7 @@ if st.sidebar.button("Evaluate Application"):
     #Financial Capacity Card
     col1,col2,col3 = st.columns(3)
     with col1:
-        
+      with st.container():  
          st.markdown('<div class="card">', unsafe_allow_html=True)
 
          st.subheader("💰 Financial Capacity")
@@ -589,7 +579,7 @@ if st.sidebar.button("Evaluate Application"):
    
    #CIC Data Card
     with col2:
-        
+      with st.container():
          st.markdown('<div class="card">', unsafe_allow_html=True)
          st.subheader("🏦 CIC Bureau")
 
@@ -602,6 +592,7 @@ if st.sidebar.button("Evaluate Application"):
          st.dataframe(cic_display, use_container_width=True)
     
     with col3:
+      with st.container():  
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("📊 Capacity Check")
         capacity_df = pd.DataFrame({
@@ -616,40 +607,40 @@ if st.sidebar.button("Evaluate Application"):
 
     
     #Final Decision Card
-    
-    st.markdown('<div class="card">', unsafe_allow_html=True) 
-    st.subheader("⚖️ Final Decision")
-    st.write("Customer Type:", customer_type)
+    with st.container():
+        st.markdown('<div class="card">', unsafe_allow_html=True) 
+        st.subheader("⚖️ Final Decision")
+        st.write("Customer Type:", customer_type)
 
-    st.write("Risk Score:", round(risk,3))
+        st.write("Risk Score:", round(risk,3))
 
-    st.write("DTI:", round(dti_2,2))
+        st.write("DTI:", round(dti_2,2))
 
-    st.write("Decision:", decision)
-    if decision == "Approve":
-       st.success(f"✅ Approved Limit: ${limit}")
+        st.write("Decision:", decision)
+        if decision == "Approve":
+           st.success(f"✅ Approved Limit: ${limit}")
 
-    elif decision == "Partial Approve":
-       st.warning(f"⚠ Adjusted Limit: ${limit}")
+        elif decision == "Partial Approve":
+           st.warning(f"⚠ Adjusted Limit: ${limit}")
 
-    elif decision == "Manual Review":
-       st.info("Application requires manual review")
+        elif decision == "Manual Review":
+           st.info("Application requires manual review")
 
-    else:
-       st.error("Application Rejected")
+        else:
+           st.error("Application Rejected")
 
 # ---------- AI Confidence Zone ----------
 
-    if risk < 0.5:
-       confidence = "Low Confidence"
-    elif risk < 0.7:
-       confidence = "Manual Review Zone"
-    else:
-       confidence = "High Confidence"
+        if risk < 0.5:
+           confidence = "Low Confidence"
+        elif risk < 0.7:
+           confidence = "Manual Review Zone"
+        else:
+           confidence = "High Confidence"
 
-    st.metric("AI Confidence Zone", confidence)
-        
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.metric("AI Confidence Zone", confidence)
+         
+        st.markdown('</div>', unsafe_allow_html=True)
 
   #Chart
 
