@@ -650,13 +650,13 @@ if st.sidebar.button("Evaluate Application"):
     st.markdown('</div>', unsafe_allow_html=True)
 
   #Chart
-   st.markdown('<div class="card section-space">', unsafe_allow_html=True)
+    st.markdown('<div class="card section-space">', unsafe_allow_html=True)
 
-   st.subheader("📈 Risk Visualization")
+    st.subheader("📈 Risk Visualization")
 
-   st.plotly_chart(fig)
+    st.plotly_chart(fig)
 
-   st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 
