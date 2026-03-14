@@ -467,10 +467,6 @@ if st.sidebar.button("Evaluate Application"):
         limit = 0
 
         st.stop()
-    
-
-    
-    st.markdown('<div class="card">', unsafe_allow_html=True)
  
 
 # ---------------- OUTPUT ---------------- #
