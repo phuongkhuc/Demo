@@ -542,14 +542,17 @@ if st.sidebar.button("Evaluate Application"):
     else:
        st.error("Application Rejected")
 
-# False Positive Tuning Zone
+# ---------- AI Confidence Zone ----------
 
-    if 0.5 <= risk < 0.7:
-        st.info("⚠ Medium Risk Zone → Sent to Manual Review to reduce False Positives")
+if risk < 0.5:
+    confidence = "Low Confidence"
+elif risk < 0.7:
+    confidence = "Manual Review Zone"
+else:
+    confidence = "High Confidence"
+
+st.metric("AI Confidence Zone", confidence)
     
-    col4 = st.metric("AI Confidence Zone",
-                 "Manual Review" if 0.5<=risk<0.7 else "Auto Decision")
-
 # ---Alert-- #
     
     if rule_result == "Reject":
