@@ -546,13 +546,13 @@ if st.sidebar.button("Evaluate Application"):
         else:
              level = "🟢 Low Default Risk"
             
-      with st.container():   
+       with st.container():   
         st.markdown('<div class="kpi">', unsafe_allow_html=True)
         st.metric("Risk Level",level)
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col3:
-      with st.container():  
+       with st.container():  
         st.markdown('<div class="kpi">', unsafe_allow_html=True)
         st.metric("Rule Engine",rule_result)
         st.markdown('</div>', unsafe_allow_html=True)
@@ -561,7 +561,7 @@ if st.sidebar.button("Evaluate Application"):
     #Financial Capacity Card
     col1,col2,col3 = st.columns(3)
     with col1:
-      with st.container():  
+       with st.container():  
          st.markdown('<div class="card">', unsafe_allow_html=True)
 
          st.subheader("💰 Financial Capacity")
@@ -579,7 +579,7 @@ if st.sidebar.button("Evaluate Application"):
    
    #CIC Data Card
     with col2:
-      with st.container():
+       with st.container():
          st.markdown('<div class="card">', unsafe_allow_html=True)
          st.subheader("🏦 CIC Bureau")
 
@@ -592,7 +592,7 @@ if st.sidebar.button("Evaluate Application"):
          st.dataframe(cic_display, use_container_width=True)
     
     with col3:
-      with st.container():  
+       with st.container():  
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("📊 Capacity Check")
         capacity_df = pd.DataFrame({
