@@ -544,14 +544,14 @@ if st.sidebar.button("Evaluate Application"):
 
 # ---------- AI Confidence Zone ----------
 
-if risk < 0.5:
-    confidence = "Low Confidence"
-elif risk < 0.7:
-    confidence = "Manual Review Zone"
-else:
-    confidence = "High Confidence"
+    if risk < 0.5:
+       confidence = "Low Confidence"
+    elif risk < 0.7:
+       confidence = "Manual Review Zone"
+    else:
+       confidence = "High Confidence"
 
-st.metric("AI Confidence Zone", confidence)
+    st.metric("AI Confidence Zone", confidence)
     
 # ---Alert-- #
     
