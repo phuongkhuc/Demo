@@ -418,7 +418,9 @@ if st.sidebar.button("Evaluate Application"):
 
     
     data = data[model.feature_names_in_]
-    risk = model.predict_proba(data)[0][1]
+    default_prob = model.predict_proba(data)[0][1]
+
+    risk = 1 - default_prob
     st.write("Risk probability:", risk)
     
     capacity_result, capacity_message = capacity_rules(
