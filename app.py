@@ -531,31 +531,31 @@ if st.sidebar.button("Evaluate Application"):
 
     with col1:
        with st.container():
-         st.markdown('<div class="kpi">', unsafe_allow_html=True)
-         st.metric(
-             "Approval Probability",
-             f"{risk*100:.2f}%",
-             help="Probability that the customer is a good borrower predicted by the ML model"
+           st.markdown('<div class="kpi">', unsafe_allow_html=True)
+           st.metric(
+               "Approval Probability",
+               f"{risk*100:.2f}%",
+               help="Probability that the customer is a good borrower predicted by the ML model"
     )
 
     with col2:
-        if risk < 0.5:
-             level = "🔴 High Default Risk"
-        elif risk < 0.7:
-             level = "🟡 Medium Risk"
-        else:
-             level = "🟢 Low Default Risk"
+          if risk < 0.5:
+               level = "🔴 High Default Risk"
+          elif risk < 0.7:
+               level = "🟡 Medium Risk"
+          else:
+               level = "🟢 Low Default Risk"
             
        with st.container():   
-        st.markdown('<div class="kpi">', unsafe_allow_html=True)
-        st.metric("Risk Level",level)
-        st.markdown('</div>', unsafe_allow_html=True)
+          st.markdown('<div class="kpi">', unsafe_allow_html=True)
+          st.metric("Risk Level",level)
+          st.markdown('</div>', unsafe_allow_html=True)
 
     with col3:
        with st.container():  
-        st.markdown('<div class="kpi">', unsafe_allow_html=True)
-        st.metric("Rule Engine",rule_result)
-        st.markdown('</div>', unsafe_allow_html=True)
+          st.markdown('<div class="kpi">', unsafe_allow_html=True)
+          st.metric("Rule Engine",rule_result)
+          st.markdown('</div>', unsafe_allow_html=True)
 
     
     #Financial Capacity Card
