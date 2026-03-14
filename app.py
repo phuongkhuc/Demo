@@ -471,47 +471,47 @@ if st.sidebar.button("Evaluate Application"):
 
 # ---------------- OUTPUT ---------------- #
 
-   st.markdown("""
-   <style>
+    st.markdown("""
+    <style>
 
-   .stApp{
-      background-color:#f4f7fb;
+    .stApp{
+       background-color:#f4f7fb;
 }
 
-   .block-container{
-      padding-top:2rem;
-      padding-bottom:2rem;
-      padding-left:3rem;
-      padding-right:3rem;
+    .block-container{
+       padding-top:2rem;
+       padding-bottom:2rem;
+       padding-left:3rem;
+       padding-right:3rem;
 }
 
-   /* card */
-   .card{
-      background:white;
-      padding:22px;
-      border-radius:12px;
-      box-shadow:0 4px 12px rgba(0,0,0,0.08);
-      margin-bottom:22px;
+    /* card */
+    .card{
+       background:white;
+       padding:22px;
+       border-radius:12px;
+       box-shadow:0 4px 12px rgba(0,0,0,0.08);
+       margin-bottom:22px;
 }
 
-   /* KPI card */
-   .kpi{
-      background:white;
-      padding:20px;
-      border-radius:10px;
-      box-shadow:0 3px 10px rgba(0,0,0,0.06);
-      text-align:center;
+    /* KPI card */
+    .kpi{
+       background:white;
+       padding:20px;
+       border-radius:10px;
+       box-shadow:0 3px 10px rgba(0,0,0,0.06);
+       text-align:center;
 }
 
-   /* section title */
-   .section-title{
-      font-size:22px;
-      font-weight:600;
-      margin-bottom:12px;
+    /* section title */
+    .section-title{
+       font-size:22px;
+       font-weight:600;
+       margin-bottom:12px;
 }
 
-   </style>
-   """, unsafe_allow_html=True)
+    </style>
+    """, unsafe_allow_html=True)
 
 
     
