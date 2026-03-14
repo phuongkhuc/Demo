@@ -474,7 +474,76 @@ if st.sidebar.button("Evaluate Application"):
  
 
 # ---------------- OUTPUT ---------------- #
+    #Customer Summary Card
+    
+    st.markdown('<div class="card">', unsafe_allow_html=True)
 
+    st.subheader("👤 Customer Summary")
+
+    summary_df = pd.DataFrame({
+       "Customer Type":[customer_type],
+       "Income":[monthly_income],
+       "Loan Amount":[loan_amount],
+       "Credit Score":[credit_score]
+})
+
+    st.dataframe(summary_df)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+   
+    #AI Risk Assessment Card
+
+    st.markdown('<div class="card section-space">', unsafe_allow_html=True)
+
+    st.subheader("🤖 AI Risk Assessment")
+
+    col1,col2,col3 = st.columns(3)
+
+    with col1:
+         st.metric(
+             "Approval Probability",
+             f"{risk*100:.2f}%",
+             help="Probability that the customer is a good borrower predicted by the ML model"
+    )
+
+    with col2:
+
+        if risk < 0.5:
+             level = "🔴 High Default Risk"
+        elif risk < 0.7:
+             level = "🟡 Medium Risk"
+        else:
+             level = "🟢 Low Default Risk"
+
+        st.metric("Risk Level", level)
+
+    with col3:
+        st.metric("Rule Engine", rule_result)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    
+    #Financial Capacity Card
+    
+    st.markdown('<div class="card section-space">', unsafe_allow_html=True)
+
+    st.subheader("💰 Financial Capacity")
+
+    capacity_df = pd.DataFrame({
+        "Monthly Income":[monthly_income],
+        "Existing Debt":[existing_debt_obligations],
+        "DTI":[round(dti_2,2)],
+        "Loan Amount":[loan_amount]
+})
+
+    st.dataframe(capacity_df)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+   
+   #CIC Data Card
+    st.markdown('<div class="card section-space">', unsafe_allow_html=True)
     st.subheader("📊 CIC Data")
 
     cic_display = pd.DataFrame({
@@ -485,7 +554,7 @@ if st.sidebar.button("Evaluate Application"):
 
     st.dataframe(cic_display)
 
-    st.subheader("Capacity Check")
+    st.subheader("📊 Capacity Check")
     capacity_df = pd.DataFrame({
         "Monthly Income":[monthly_income],
         "Existing Debt":[existing_debt_obligations],
@@ -494,38 +563,10 @@ if st.sidebar.button("Evaluate Application"):
 })
 
     st.dataframe(capacity_df)
-
-    # Tách KPI dashboard section
-    
-    st.subheader("📊 AI Risk Assessment Dashboard")
-
-     # ---------------- ROW 1: METRICS ---------------- #
-
-    col1,col2,col3 = st.columns(3)
-
-    with col1:
-        st.metric(
-            "Approval Probability",
-            f"{risk*100:.2f}%",
-            help="Probability that the customer is a good borrower predicted by the ML model"
-    )
-
-    with col2:
-
-        if risk < 0.4:
-            level = "🔴 High Default Risk"
-        elif risk < 0.7:
-            level = "🟡 Medium Risk"
-        else:
-            level = "🟢 Low Default Risk"
-
-        st.metric("Risk Level", level)
-
-    with col3:
-        st.metric("Rule Engine Status", rule_result)
     st.markdown('</div>', unsafe_allow_html=True)
+
     
-#------
+    #Final Decision Card
     
     st.markdown('<div class="card section-space">', unsafe_allow_html=True) 
     st.subheader("⚖️ Final Decision")
@@ -537,10 +578,10 @@ if st.sidebar.button("Evaluate Application"):
 
     st.write("Decision:", decision)
     if decision == "Approve":
-       st.success(f"Approved Limit: ${limit}")
+       st.success(f"✅ Approved Limit: ${limit}")
 
     elif decision == "Partial Approve":
-       st.warning(f"Adjusted Limit: ${limit}")
+       st.warning(f"⚠ Adjusted Limit: ${limit}")
 
     elif decision == "Manual Review":
        st.info("Application requires manual review")
@@ -558,109 +599,11 @@ if st.sidebar.button("Evaluate Application"):
        confidence = "High Confidence"
 
     st.metric("AI Confidence Zone", confidence)
-    
-# ---Alert-- #
-    
-    if rule_result == "Reject":
-        st.error("Application rejected by rule engine")
-
-    elif 0.5 <= risk < 0.7:
-        st.warning("Medium risk detected → Manual review required")
-
-    elif risk >= 0.7:
-        st.success("Low default risk → Auto approval possible")
         
     st.markdown('</div>', unsafe_allow_html=True)
-    
-   # ---------- ROW 2 : MAIN CHARTS ---------- #
-    #Tách Chart section
-
-    st.markdown('<div class="card section-space">', unsafe_allow_html=True)
-
-    #---
-   
-    st.subheader("💳 Financial Overview")
-    
-    col1, col2 = st.columns(2)
-
-    with col1:
-
-        fig = go.Figure(go.Indicator(
-           mode="gauge+number",
-           value=risk * 100,
-           title={'text': "Default Risk (%)"},
-           gauge={
-               'axis': {'range':[0,100]},
-               'bar': {'color':"#1f2937"},
-               'steps':[
-                   {'range':[0,30],'color':"#22c55e"},
-                   {'range':[30,60],'color':"#facc15"},
-                   {'range':[60,100],'color':"#ef4444"}
-            ]
-        }
-    ))
-      
-        st.plotly_chart(fig, use_container_width=True, key="risk_gauge")
-
-        # ---------------- financial chart ---------------- #
-
-    with col2:
-       
-       finance_data = pd.DataFrame({
-           "Category":["Income","Expenses","Loan"],
-           "Amount":[monthly_income, monthly_expenses, loan_amount]
-})
-
-       fig2 = px.bar(
-           finance_data,
-           x="Category",
-           y="Amount",
-           color="Category",
-           title="Customer Financial Overview",
-           color_discrete_map={
-                "Income":"#3b82f6",
-                "Expenses":"#f59e0b",
-                "Loan":"#ef4444"
-    }
-)
-        
-       st.plotly_chart(fig2, use_container_width=True, key="finance_chart")
-
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-# ---------------- ROW 3 : RISK DISTRIBUTION ---------------- #
-    #Tách Risk distribution
-
-    st.markdown('<div class="card section-space">', unsafe_allow_html=True)
 
 
-    #----
 
-    st.subheader("📈Risk Distribution")
-    risk_chart = pd.DataFrame({
-       "Type":["Low Risk","High Risk"],
-       "Probability":[1-risk,risk]
-})
 
-    fig3 = px.pie(
-        risk_chart,
-        names="Type",
-        values="Probability",
-        color="Type",
-        color_discrete_map={
-             "Low Risk":"#22c55e",
-             "High Risk":"#ef4444"
-    },
-        title="Risk Probability Distribution"
-)
-
-    st.plotly_chart(fig3, use_container_width=True, key="risk_distribution")
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ---------- ROW 4 : CUSTOMER DATA ---------- #
-
-    st.subheader("📝 Customer Data")
-
-    st.dataframe(data)   
+  
 
