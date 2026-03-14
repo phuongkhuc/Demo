@@ -469,37 +469,48 @@ if st.sidebar.button("Evaluate Application"):
  
 
 # ---------------- OUTPUT ---------------- #
-
     st.markdown("""
     <style>
 
     .stApp{
-       background:#f5f7fb;
+         background-color:#f4f6fb;
 }
 
+    /* container */
+    .block-container{
+        padding-top:2rem;
+        padding-left:2rem;
+        padding-right:2rem;
+}
+ 
     /* dashboard card */
     .card{
-       background:white;
-       border-radius:12px;
-       padding:25px;
-       margin-top:15px;
-       margin-bottom:20px;
-       border:1px solid #e6e8ef;
-       box-shadow:0 2px 6px rgba(0,0,0,0.05);
+        background:white;
+        border-radius:12px;
+        padding:20px;
+        border:1px solid #e6e9ef;
+        box-shadow:0 2px 8px rgba(0,0,0,0.05);
 }
 
-    /* KPI card */
-    .kpi{
-       background:white;
-       border-radius:10px;
-       padding:18px;
-       border:1px solid #e6e8ef;
-       box-shadow:0 2px 6px rgba(0,0,0,0.05);
+    /* KPI cards */
+    .kpi-card{
+        background:white;
+        border-radius:10px;
+        padding:18px;
+        border:1px solid #e6e9ef;
+        text-align:center;
+        box-shadow:0 1px 4px rgba(0,0,0,0.05);
+}
+
+    /* section title */
+    .section-title{
+        font-size:20px;
+        font-weight:600;
+        margin-bottom:10px;
 }
 
     </style>
     """, unsafe_allow_html=True)
-
 
     
     #Customer Summary Card
